@@ -1,5 +1,5 @@
-from kivy.uix.screenmanager import ScreenManager
+#from kivy.uix.screenmanager import ScreenManager
 
 
-class ScreenManager(ScreenManager):
+class ScreenManager():
     pass
