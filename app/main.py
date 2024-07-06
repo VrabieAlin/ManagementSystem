@@ -19,6 +19,7 @@ class MyApp(QWidget):
 
         # Set fullscreen mode
         self.showFullScreen()
+        #self.show()
 
 
 # class MyWidget(QtWidgets.QWidget):

@@ -8,6 +8,8 @@ class RestaurantView(QWidget):
 
         # Creează un QVBoxLayout
         vbox_layout = QVBoxLayout()
+        vbox_layout.setContentsMargins(0, 0, 0, 0)
+        vbox_layout.setSpacing(0)
 
         # Adaugă widget-uri la QVBoxLayout
         label1 = QLabel('')

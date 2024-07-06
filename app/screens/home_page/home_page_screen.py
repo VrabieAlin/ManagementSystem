@@ -15,6 +15,8 @@ class HomePageScreen(QWidget):
     def loadViews(self):
 
         grid_layout = QGridLayout()
+        grid_layout.setHorizontalSpacing(0)
+        grid_layout.setVerticalSpacing(0)
 
         #Elements:
         navbar = NavbarView()
@@ -29,7 +31,10 @@ class HomePageScreen(QWidget):
         grid_layout.setColumnStretch(1, 1)
 
         grid_layout.setRowStretch(0, 1)
-        grid_layout.setRowStretch(1, 5)
+        grid_layout.setRowStretch(1, 6)
+
+        grid_layout.setRowMinimumHeight(0, 100)
+        grid_layout.setColumnMinimumWidth(1, 100)
 
         self.my_layout = grid_layout
 
