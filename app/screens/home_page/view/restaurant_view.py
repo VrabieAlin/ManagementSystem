@@ -22,8 +22,8 @@ class RestaurantView(Widget):
     def __init__(self, **kwargs):
         super(RestaurantView, self).__init__(**kwargs)
         with self.canvas.before:
-            Color(0.6, 0.6, 0.6, 1)  # RGBA (light pink)
-            self.rect = Rectangle(size=self.size, pos=self.pos)
+            #Color(0.6, 0.6, 0.6, 1)  # RGBA (light pink)
+            self.rect = Rectangle(source='D:\\MySpace\\SistemgESTIUNE\\ManagementSystem\\app\\static\\restaurant_plane.png', size=self.size, pos=self.pos)
 
         self.bind(size=self._update_rect, pos=self._update_rect)
 
