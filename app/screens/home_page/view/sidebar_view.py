@@ -1,17 +1,22 @@
-from kivy.graphics import Color, Rectangle
-from kivy.uix.widget import Widget
+import sys
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QBoxLayout
 
 
-class SidebarView(Widget):
+class SidebarView(QWidget):
+    def __init__(self, parent=None):
+        super(SidebarView, self).__init__(parent)
 
-    def __init__(self,**kwargs):
-        super(SidebarView,self).__init__(**kwargs)
-        with self.canvas.before:
-            Color(0.2, 0.6, 0.8, 1)  # RGBA (light blue)
-            self.rect = Rectangle(size=self.size, pos=self.pos)
+        # Creează un QVBoxLayout
+        vbox_layout = QVBoxLayout()
+        vbox_layout.setContentsMargins(0, 0, 0, 0)
+        vbox_layout.setSpacing(0)
 
-        self.bind(size=self._update_rect, pos=self._update_rect)
+        # Adaugă widget-uri la QVBoxLayout
+        label1 = QLabel('')
+        vbox_layout.addWidget(label1)
 
-    def _update_rect(self, instance, value):
-        self.rect.size = instance.size
-        self.rect.pos = instance.pos
+        # Setează layout-ul pentru widget-ul personalizat
+        self.setLayout(vbox_layout)
+
+        # Aplică stil CSS pentru a adăuga o bordură
+        self.setStyleSheet("background-color: red; border: 2px solid blue;")

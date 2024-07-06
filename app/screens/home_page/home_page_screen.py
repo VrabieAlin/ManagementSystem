@@ -1,41 +1,44 @@
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.screenmanager import Screen
-from kivy.uix.label import Label
-from kivy.graphics import *
+import sys
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QGridLayout
 
 from app.screens.home_page.view.navbar_view import NavbarView
 from app.screens.home_page.view.restaurant_view import RestaurantView
 from app.screens.home_page.view.sidebar_view import SidebarView
 
 
-class HomePageScreen(Screen):
+class HomePageScreen(QWidget):
 
-    def __init__(self, **kwargs):
-        super(HomePageScreen, self).__init__(**kwargs)
+    def __init__(self, **qtargs):
+        super().__init__(**qtargs)
         self.loadViews()
 
     def loadViews(self):
-        # Layout principal pe verticală
-        main_layout = BoxLayout(orientation='vertical')
 
-        # Navbar care ocupă 15% din înălțime
-        navbar = NavbarView(size_hint=(1, 0.15))
-        navbar.add_widget(Label())
+        grid_layout = QGridLayout()
+        grid_layout.setHorizontalSpacing(0)
+        grid_layout.setVerticalSpacing(0)
 
-        # Layout pentru restul conținutului pe axa y (85%)
-        content_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.85))
+        #Elements:
+        navbar = NavbarView()
+        scroll_bar = SidebarView()
+        restaurant_view = RestaurantView()
 
-        # View care ocupă 85% din axa x
-        view = RestaurantView(size_hint_x=0.85)
-        content_layout.add_widget(view)
+        grid_layout.addWidget(navbar, 0, 0, 1, 2)
+        grid_layout.addWidget(restaurant_view, 1, 0)
+        grid_layout.addWidget(scroll_bar, 1, 1)
 
-        # Scrollbar care ocupă restul spațiului pe axa x (15%)
-        scrollbar = SidebarView(size_hint_x=0.15)
+        grid_layout.setColumnStretch(0, 5)
+        grid_layout.setColumnStretch(1, 1)
 
-        content_layout.add_widget(scrollbar)
-        main_layout.add_widget(navbar)
-        main_layout.add_widget(content_layout)
+        grid_layout.setRowStretch(0, 1)
+        grid_layout.setRowStretch(1, 6)
 
-        self.add_widget(main_layout)
+        grid_layout.setRowMinimumHeight(0, 100)
+        grid_layout.setColumnMinimumWidth(1, 100)
+
+        self.my_layout = grid_layout
+
+    def getLayout(self):
+        return self.my_layout
+
+
