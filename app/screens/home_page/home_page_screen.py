@@ -8,9 +8,10 @@ from app.screens.home_page.view.sidebar_view import SidebarView
 
 class HomePageScreen(QWidget):
 
-    def __init__(self, **qtargs):
-        super().__init__(**qtargs)
-        self.loadViews()
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.setLayout(self.loadViews())
 
     def loadViews(self):
 
@@ -36,9 +37,5 @@ class HomePageScreen(QWidget):
         grid_layout.setRowMinimumHeight(0, 100)
         grid_layout.setColumnMinimumWidth(1, 100)
 
-        self.my_layout = grid_layout
-
-    def getLayout(self):
-        return self.my_layout
-
+        return grid_layout
 
