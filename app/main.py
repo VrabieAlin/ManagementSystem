@@ -1,49 +1,35 @@
-# from kivy.app import App
-# from kivy.config import Config
-#
-from app.screen_manager.screen_manager import ScreenManager
+
 from app.utils.constants import ScreenNames
 from app.screens.home_page.home_page_screen import HomePageScreen
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel
+from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 
-class MyApp(QWidget):
+
+class MyApp(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.screens = {}
+        self.screen_manager = QStackedWidget()
 
-        sm = ScreenManager()
+        #Home Screen
+        self.home_screen = HomePageScreen(self)
+        self.screen_manager.addWidget(self.home_screen)
+        self.screens[ScreenNames.HOME_PAGE] = self.screen_manager.indexOf(self.home_screen)
 
-        layout = HomePageScreen().getLayout()
-        #layout = QVBoxLayout()
-        self.setLayout(layout)
+        self.setCentralWidget(self.screen_manager)
 
         # Set fullscreen mode
         self.showFullScreen()
-        #self.show()
 
+    def set_screen(self, screen_name):
+        if screen_name in self.screens:
+            self.screen_manager.setCurrentIndex(self.screens[screen_name])
+        else:
+            print(f"Screen {screen_name} does not exist")
 
-# class MyWidget(QtWidgets.QWidget):
-#     def __init__(self):
-#         super().__init__()
-#
-#         self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
-#
-#         self.button = QtWidgets.QPushButton("Click me!")
-#         self.text = QtWidgets.QLabel("Hello World",
-#                                      alignment=QtCore.Qt.AlignCenter)
-#
-#         self.layout = QtWidgets.QVBoxLayout(self)
-#         self.layout.addWidget(self.text)
-#         self.layout.addWidget(self.button)
-#
-#         self.button.clicked.connect(self.magic)
-#
-#     @QtCore.Slot()
-#     def magic(self):
-#         self.text.setText(random.choice(self.hello))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    widget = MyApp()
+    main_window = MyApp()
+    main_window.show()
     sys.exit(app.exec())
-    #MyApp().show()
