@@ -1,10 +1,11 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QBoxLayout
-
+from app.screens.home_page.restaurant_rooms import RoomsManager, Room, RoomObject
 
 class RestaurantView(QWidget):
-    def __init__(self, parent=None):
-        super(RestaurantView, self).__init__(parent)
+    def __init__(self, main_window, **kwargs):
+        super(RestaurantView, self).__init__()
+        self.main_window = main_window
 
         # Creează un QVBoxLayout
         vbox_layout = QVBoxLayout()

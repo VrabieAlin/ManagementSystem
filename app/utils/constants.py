@@ -19,3 +19,6 @@ class Texts:
     MODAL_EXIT = "Esti sigur ca vrei sa iesi din aplicatie?"
     YES = "Da"
     NO = "Nu"
+
+class DataBase:
+    BD_NAME = "local_storage.db"
