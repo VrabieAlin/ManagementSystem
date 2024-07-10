@@ -1,8 +1,8 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QDialog, QDialogButtonBox, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
 
 from app.utils.constants import Colors, BorderType, Texts
 from app.utils.css_utils import CSSUtils
+from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
 
@@ -46,6 +46,11 @@ class SidebarView(QWidget):
 
     def apply_view_logic(self):
         self.exit_btn.clicked.connect(self.show_exit_app_modal)
+        self.menu_btn.clicked.connect(self.show_menu_modal)
+
+    def show_menu_modal(self):
+        menu_modal = MenuModal()
+        menu_modal.exec()
 
     def show_exit_app_modal(self):
         exit_dialog = Modal(Texts.MODAL_EXIT, Texts.YES, Texts.NO)
