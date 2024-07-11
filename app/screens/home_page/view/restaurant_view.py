@@ -20,4 +20,4 @@ class RestaurantView(QWidget):
         self.setLayout(vbox_layout)
 
         # Aplică stil CSS pentru a adăuga o bordură
-        self.setStyleSheet("background-color: green; border: 2px solid blue;")
+        #self.setStyleSheet("background-color: green; border: 2px solid blue;")

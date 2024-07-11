@@ -6,6 +6,7 @@ from app.utils.widgets.input_modal import InputModal
 from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
+from app.utils.widgets.Labels.custom_lable_1 import CustomLabel1
 from state.state_manager import StateManager
 
 
@@ -15,30 +16,33 @@ class SidebarView(QWidget):
         self.main_window = main_window
         self.state_manager = StateManager.instance()
         self.setLayout(self.loadViews())
-        self.apply_css()
+        #self.apply_css()
         self.apply_view_logic()
+
 
     def loadViews(self):
         # Create QVBoxLayout to place elements vertically
         self.vbox_layout = QVBoxLayout()
         self.vbox_layout.setContentsMargins(0, 0, 0, 0)
-        self.vbox_layout.setSpacing(0)
+        self.vbox_layout.setSpacing(20)
 
         # Init elements
-        self.name_label = QLabel(self.state_manager.user_name)
-        self.name_label.setFixedHeight(150)
+        self.name_label = CustomLabel1(self.state_manager.user_name)
         self.login_btn = WidgetUtils.createVExpandableButton(Texts.LOGIN)
         self.logout_btn = WidgetUtils.createVExpandableButton(Texts.LOGOUT)
         self.menu_btn = WidgetUtils.createVExpandableButton(Texts.MENU)
         self.exit_btn = WidgetUtils.createVExpandableButton(Texts.EXIT)
 
         if self.state_manager.user_name is not None:
-            self.vbox_layout.addWidget(self.name_label)
-        self.vbox_layout.addWidget(self.login_btn)
+            self.vbox_layout.addStretch(1)
+            self.vbox_layout.addWidget(self.name_label, alignment=Qt.AlignHCenter)
+        self.vbox_layout.addStretch(4)
+        self.vbox_layout.addWidget(self.login_btn, alignment=Qt.AlignHCenter)
         if self.state_manager.user_name is not None:
-            self.vbox_layout.addWidget(self.logout_btn)
-        self.vbox_layout.addWidget(self.menu_btn)
-        self.vbox_layout.addWidget(self.exit_btn)
+            self.vbox_layout.addWidget(self.logout_btn, alignment=Qt.AlignHCenter)
+        self.vbox_layout.addWidget(self.menu_btn, alignment=Qt.AlignHCenter)
+        self.vbox_layout.addWidget(self.exit_btn, alignment=Qt.AlignHCenter)
+        self.vbox_layout.addSpacing(10)
 
         return self.vbox_layout
 
