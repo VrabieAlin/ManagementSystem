@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
 
 from app.utils.constants import Colors, BorderType, Texts, InputType
@@ -16,9 +17,8 @@ class SidebarView(QWidget):
         self.main_window = main_window
         self.state_manager = StateManager.instance()
         self.setLayout(self.loadViews())
-        #self.apply_css()
+        # self.apply_css()
         self.apply_view_logic()
-
 
     def loadViews(self):
         # Create QVBoxLayout to place elements vertically
@@ -27,7 +27,8 @@ class SidebarView(QWidget):
         self.vbox_layout.setSpacing(20)
 
         # Init elements
-        self.name_label = CustomLabel1(self.state_manager.user_name)
+        name = self.state_manager.user_name
+        self.name_label = CustomLabel1("" if name is None else name)
         self.login_btn = WidgetUtils.createVExpandableButton(Texts.LOGIN)
         self.logout_btn = WidgetUtils.createVExpandableButton(Texts.LOGOUT)
         self.menu_btn = WidgetUtils.createVExpandableButton(Texts.MENU)
@@ -87,7 +88,7 @@ class SidebarView(QWidget):
         self.state_manager.logout()
 
     def login(self):
-        input_dialog = InputModal(Texts.LOGIN_MODAL,Texts.PASSWORD,InputType.PASSWORD,Texts.LOGIN)
+        input_dialog = InputModal(Texts.LOGIN_MODAL, Texts.PASSWORD, InputType.PASSWORD, Texts.LOGIN)
         input_dialog.input_modal.connect(self.on_password_provided)
         input_dialog.exec()
 
@@ -96,12 +97,9 @@ class SidebarView(QWidget):
 
     def update_ui(self):
         if self.state_manager.user_name is not None:
-            self.vbox_layout.insertWidget(1,self.logout_btn)
-        else:
-            self.vbox_layout.removeWidget(self.logout_btn)
-
-        if self.state_manager.user_name is not None:
+            self.vbox_layout.insertWidget(2, self.logout_btn)
             self.name_label.setText(self.state_manager.user_name)
             self.vbox_layout.insertWidget(0, self.name_label)
         else:
+            self.vbox_layout.removeWidget(self.logout_btn)
             self.vbox_layout.removeWidget(self.name_label)
