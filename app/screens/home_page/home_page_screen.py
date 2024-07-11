@@ -10,11 +10,12 @@ class HomePageScreen(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
-        self.rooms_manager = RoomsManager()
+        self.rooms_manager = RoomsManager(main_window.db_manager)
 
         self.setLayout(self.loadViews())
 
     def loadViews(self):
+
         grid_layout = QGridLayout()
         grid_layout.setHorizontalSpacing(0)
         grid_layout.setVerticalSpacing(0)
@@ -34,7 +35,7 @@ class HomePageScreen(QWidget):
         grid_layout.setRowStretch(0, 1)
         grid_layout.setRowStretch(1, 6)
 
-        grid_layout.setRowMinimumHeight(0, 100)
+        grid_layout.setRowMinimumHeight(0, 150)
         grid_layout.setColumnMinimumWidth(1, 100)
 
         return grid_layout

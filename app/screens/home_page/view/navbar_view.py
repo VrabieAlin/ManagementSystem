@@ -1,10 +1,13 @@
 import sys
-from PySide6.QtWidgets import QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QPushButton, QBoxLayout
+from PySide6.QtWidgets import QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QPushButton, QBoxLayout, \
+    QFrame
 from app.utils.widgets.widgets_utils import WidgetUtils
 from PySide6.QtCore import Qt
 
 from app.screens.home_page.restaurant_rooms import RoomsManager, Room, RoomObject
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
+from app.screens.home_page.view.elements.navbar_item import ImageLabelWidget
+from app.utils.constants import Colors
 
 class NavbarView(QWidget):
     def __init__(self, main_window, **kwargs):
@@ -28,22 +31,25 @@ class NavbarView(QWidget):
 
         # Creează un QWidget pentru a acționa ca fundal pentru butoane
         button_background_widget = QWidget()
-        button_background_widget.setStyleSheet("background-color: lightblue;")
+        #button_background_widget.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY};")
         hbox_layout = QHBoxLayout(button_background_widget)
+        hbox_layout.setContentsMargins(0, 0, 0, 0)
 
 
         # Creează butoane cu dimensiuni specifice
         for room in self.restaurant_rooms:
-            button = WidgetUtils.createVExpandableButton(room.name)
-            button.setMinimumWidth(200)
-            button.setMaximumWidth(300)
-            hbox_layout.addWidget(button)
+
+            button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name)
+            #button.setMinimumWidth(200)
+            #button.setMaximumWidth(300)
+            hbox_layout.addWidget(button, alignment=Qt.AlignHCenter)
 
         # Adaugă spatiere la QHBoxLayout dupa butoane pentru a le muta la stanga
         hbox_layout.addStretch(1)
 
         # Creează un QScrollArea și setează scroll_content ca widget conținut
         scroll_area = CustomScrollArea()
+        scroll_area.setFrameShape(QFrame.NoFrame)
         scroll_area.setWidget(button_background_widget)
 
         # Adaugă QWidget-ul cu butoane în layout-ul principal
@@ -52,5 +58,3 @@ class NavbarView(QWidget):
         # Setează layout-ul pentru fereastra principală
         self.setLayout(main_layout)
 
-        # Aplică stil CSS pentru a adăuga o bordură
-        self.setStyleSheet("background-color: lightblue; border: 2px solid blue;")

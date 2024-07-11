@@ -5,6 +5,7 @@ from app.utils.constants import Colors, BorderType, Texts
 from app.utils.css_utils import CSSUtils
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
+from app.utils.widgets.Labels.custom_lable_1 import CustomLabel1
 
 
 class SidebarView(QWidget):
@@ -12,28 +13,31 @@ class SidebarView(QWidget):
         super().__init__()
         self.main_window = main_window
         self.setLayout(self.loadViews())
-        self.apply_css()
+        #self.apply_css()
         self.apply_view_logic()
+
 
     def loadViews(self):
         # Create QVBoxLayout to place elements vertically
         vbox_layout = QVBoxLayout()
         vbox_layout.setContentsMargins(0, 0, 0, 0)
-        vbox_layout.setSpacing(0)
+        vbox_layout.setSpacing(20)
 
         # Init elements
-        self.name_label = QLabel('Dezen20')
-        self.name_label.setFixedHeight(150)
+        self.name_label = CustomLabel1('Dezen20')
         self.login_btn = WidgetUtils.createVExpandableButton(Texts.LOGIN)
         self.logout_btn = WidgetUtils.createVExpandableButton(Texts.LOGOUT)
         self.menu_btn = WidgetUtils.createVExpandableButton(Texts.MENU)
         self.exit_btn = WidgetUtils.createVExpandableButton(Texts.EXIT)
 
-        vbox_layout.addWidget(self.name_label)
-        vbox_layout.addWidget(self.login_btn)
-        vbox_layout.addWidget(self.logout_btn)
-        vbox_layout.addWidget(self.menu_btn)
-        vbox_layout.addWidget(self.exit_btn)
+        vbox_layout.addStretch(1)
+        vbox_layout.addWidget(self.name_label, alignment=Qt.AlignHCenter)
+        vbox_layout.addStretch(4)
+        vbox_layout.addWidget(self.login_btn, alignment=Qt.AlignHCenter)
+        vbox_layout.addWidget(self.logout_btn, alignment=Qt.AlignHCenter)
+        vbox_layout.addWidget(self.menu_btn, alignment=Qt.AlignHCenter)
+        vbox_layout.addWidget(self.exit_btn, alignment=Qt.AlignHCenter)
+        vbox_layout.addSpacing(10)
 
         return vbox_layout
 

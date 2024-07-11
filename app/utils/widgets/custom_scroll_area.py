@@ -11,6 +11,8 @@ class CustomScrollArea(QScrollArea):
         self.setMouseTracking(True)
         self.last_mouse_position = QPoint()
 
+
+
     def mousePressEvent(self, event):
         self.last_mouse_position = event.pos()
         super().mousePressEvent(event)
