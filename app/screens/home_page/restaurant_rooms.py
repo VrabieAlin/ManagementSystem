@@ -1,5 +1,6 @@
 import sqlite3
 from app.utils.constants import DataBase
+from app.DataBase.DB_manager import DBManager
 
 class RoomObject():
     def __init__(self, **kwargs):
@@ -30,46 +31,17 @@ class Room():
 
 #To do: to move this file in other location
 class RoomsManager():
-    def __init__(self):
-        self.init_db()
+    def __init__(self, db_manager):
+        self.db_manager = db_manager
 
         self.rooms = []
         self.load_rooms()
 
-    def init_db(self):
-        self.conn = sqlite3.connect(DataBase.BD_NAME)
-        self.cursor = self.conn.cursor()
-
-        # Creare tabel rooms
-        self.cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS rooms (
-                        id INTEGER PRIMARY KEY,
-                        name TEXT
-                    )
-                """)
-
-        # Creare tabel objects
-        self.cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS room_objects (
-                        object_id INTEGER PRIMARY KEY,
-                        owner_room_id INTEGER,
-                        pos_x INTEGER,
-                        pos_y INTEGER,
-                        size_x INTEGER,
-                        size_y INTEGER,
-                        rotation REAL,
-                        image_id INTEGER,
-                        name TEXT,
-                        FOREIGN KEY (owner_room_id) REFERENCES rooms (id)
-                    )
-                """)
-
-        self.conn.commit()
 
     def load_rooms(self):
         # Get from rooms table
-        self.cursor.execute("SELECT * FROM rooms")
-        rooms = self.cursor.fetchall()
+        self.db_manager.cursor.execute("SELECT * FROM rooms")
+        rooms = self.db_manager.cursor.fetchall()
         for (room_id, room_name) in rooms:
             room = Room(name=room_name, id=room_id)
             self.load_room_objects(room)
@@ -77,8 +49,8 @@ class RoomsManager():
 
     def load_room_objects(self, room):
         #Get object from objects table
-        self.cursor.execute("SELECT * FROM room_objects WHERE owner_room_id = ?", (room.id,))
-        objects = self.cursor.fetchall()
+        self.db_manager.cursor.execute("SELECT * FROM room_objects WHERE owner_room_id = ?", (room.id,))
+        objects = self.db_manager.cursor.fetchall()
 
         for (object_id, owner_room_id, pos_x, pos_y, size_x, size_y, rotation, image_id, name) in objects:
             table = RoomObject()
