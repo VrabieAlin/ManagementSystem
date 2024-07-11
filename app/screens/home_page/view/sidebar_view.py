@@ -1,41 +1,46 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
 
-from app.utils.constants import Colors, BorderType, Texts
+from app.utils.constants import Colors, BorderType, Texts, InputType
 from app.utils.css_utils import CSSUtils
+from app.utils.widgets.input_modal import InputModal
 from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
+from state.state_manager import StateManager
 
 
 class SidebarView(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
+        self.state_manager = StateManager.instance()
         self.setLayout(self.loadViews())
         self.apply_css()
         self.apply_view_logic()
 
     def loadViews(self):
         # Create QVBoxLayout to place elements vertically
-        vbox_layout = QVBoxLayout()
-        vbox_layout.setContentsMargins(0, 0, 0, 0)
-        vbox_layout.setSpacing(0)
+        self.vbox_layout = QVBoxLayout()
+        self.vbox_layout.setContentsMargins(0, 0, 0, 0)
+        self.vbox_layout.setSpacing(0)
 
         # Init elements
-        self.name_label = QLabel('Dezen20')
+        self.name_label = QLabel(self.state_manager.user_name)
         self.name_label.setFixedHeight(150)
         self.login_btn = WidgetUtils.createVExpandableButton(Texts.LOGIN)
         self.logout_btn = WidgetUtils.createVExpandableButton(Texts.LOGOUT)
         self.menu_btn = WidgetUtils.createVExpandableButton(Texts.MENU)
         self.exit_btn = WidgetUtils.createVExpandableButton(Texts.EXIT)
 
-        vbox_layout.addWidget(self.name_label)
-        vbox_layout.addWidget(self.login_btn)
-        vbox_layout.addWidget(self.logout_btn)
-        vbox_layout.addWidget(self.menu_btn)
-        vbox_layout.addWidget(self.exit_btn)
+        if self.state_manager.user_name is not None:
+            self.vbox_layout.addWidget(self.name_label)
+        self.vbox_layout.addWidget(self.login_btn)
+        if self.state_manager.user_name is not None:
+            self.vbox_layout.addWidget(self.logout_btn)
+        self.vbox_layout.addWidget(self.menu_btn)
+        self.vbox_layout.addWidget(self.exit_btn)
 
-        return vbox_layout
+        return self.vbox_layout
 
     def apply_css(self):
         # Aplică stil CSS pentru a adăuga o bordură
@@ -47,9 +52,15 @@ class SidebarView(QWidget):
     def apply_view_logic(self):
         self.exit_btn.clicked.connect(self.show_exit_app_modal)
         self.menu_btn.clicked.connect(self.show_menu_modal)
+        self.logout_btn.clicked.connect(self.logout)
+        self.login_btn.clicked.connect(self.login)
+        self.state_manager.state_changed.connect(self.update_ui)
 
     def show_menu_modal(self):
-        menu_modal = MenuModal()
+        # Complete these with const text class when options will be detailed
+        menu_modal = MenuModal(["teste", "teste1", "teste2", "teste3", "teste4", "teste5", "teste6",
+                                "teste7", "teste8"])
+        menu_modal.menu_button.connect(self.on_modal_menu_selected)
         menu_modal.exec()
 
     def show_exit_app_modal(self):
@@ -63,3 +74,30 @@ class SidebarView(QWidget):
 
     def reject_exit_app_modal(self):
         pass
+
+    def on_modal_menu_selected(self, text):
+        pass
+        # Create a switch based on btn text from text const class to handle actions
+
+    def logout(self):
+        self.state_manager.logout()
+
+    def login(self):
+        input_dialog = InputModal(Texts.LOGIN_MODAL,Texts.PASSWORD,InputType.PASSWORD,Texts.LOGIN)
+        input_dialog.input_modal.connect(self.on_password_provided)
+        input_dialog.exec()
+
+    def on_password_provided(self):
+        self.state_manager.login("teste")
+
+    def update_ui(self):
+        if self.state_manager.user_name is not None:
+            self.vbox_layout.insertWidget(1,self.logout_btn)
+        else:
+            self.vbox_layout.removeWidget(self.logout_btn)
+
+        if self.state_manager.user_name is not None:
+            self.name_label.setText(self.state_manager.user_name)
+            self.vbox_layout.insertWidget(0, self.name_label)
+        else:
+            self.vbox_layout.removeWidget(self.name_label)
