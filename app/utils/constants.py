@@ -27,6 +27,12 @@ class Texts:
     MODAL_EXIT = "Esti sigur ca vrei sa iesi din aplicatie?"
     YES = "Da"
     NO = "Nu"
+    LOGIN_MODAL = "Inserati-va parola: "
+    PASSWORD = "Parola"
 
 class DataBase:
     BD_NAME = "local_storage.db"
+
+class InputType:
+    TEXT = "text"
+    PASSWORD = "pass"

@@ -5,6 +5,7 @@ from app.screens.home_page.view.restaurant_view import RestaurantView
 from app.screens.home_page.view.sidebar_view import SidebarView
 from app.screens.home_page.restaurant_rooms import RoomsManager, Room, RoomObject
 
+
 class HomePageScreen(QWidget):
 
     def __init__(self, main_window):
