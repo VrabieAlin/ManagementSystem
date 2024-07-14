@@ -34,16 +34,22 @@ class SidebarView(QWidget):
         self.menu_btn = WidgetUtils.createVExpandableButton(Texts.MENU)
         self.exit_btn = WidgetUtils.createVExpandableButton(Texts.EXIT)
 
-        if self.state_manager.user_name is not None:
-            self.vbox_layout.addStretch(1)
-            self.vbox_layout.addWidget(self.name_label, alignment=Qt.AlignHCenter)
+
+
+
+        self.vbox_layout.addStretch(1)
+        self.vbox_layout.addWidget(self.name_label, alignment=Qt.AlignHCenter)
+        self.vbox_layout.addWidget(self.logout_btn, alignment=Qt.AlignHCenter)
+
         self.vbox_layout.addStretch(4)
         self.vbox_layout.addWidget(self.login_btn, alignment=Qt.AlignHCenter)
-        if self.state_manager.user_name is not None:
-            self.vbox_layout.addWidget(self.logout_btn, alignment=Qt.AlignHCenter)
         self.vbox_layout.addWidget(self.menu_btn, alignment=Qt.AlignHCenter)
         self.vbox_layout.addWidget(self.exit_btn, alignment=Qt.AlignHCenter)
         self.vbox_layout.addSpacing(10)
+
+        if self.state_manager.user_name is None:
+            self.logout_btn.hide()
+            self.name_label.hide()
 
         return self.vbox_layout
 
@@ -97,9 +103,16 @@ class SidebarView(QWidget):
 
     def update_ui(self):
         if self.state_manager.user_name is not None:
-            self.vbox_layout.insertWidget(2, self.logout_btn)
             self.name_label.setText(self.state_manager.user_name)
-            self.vbox_layout.insertWidget(0, self.name_label)
+            self.logout_btn.show()
+            self.name_label.show()
         else:
-            self.vbox_layout.removeWidget(self.logout_btn)
-            self.vbox_layout.removeWidget(self.name_label)
+            self.logout_btn.hide()
+            self.name_label.hide()
+        # if self.state_manager.user_name is not None:
+        #     self.vbox_layout.insertWidget(2, self.logout_btn)
+        #     self.name_label.setText(self.state_manager.user_name)
+        #     self.vbox_layout.insertWidget(0, self.name_label)
+        # else:
+        #     self.vbox_layout.removeWidget(self.logout_btn)
+        #     self.vbox_layout.removeWidget(self.name_label)
