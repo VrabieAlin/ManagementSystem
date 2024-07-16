@@ -1,7 +1,3 @@
-import sqlite3
-from app.utils.constants import DataBase
-from app.DataBase.DB_manager import DBManager
-
 class RoomObject():
     def __init__(self, **kwargs):
         self.id = -1

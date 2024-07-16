@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget, QGridLayout
 from app.screens.home_page.view.navbar_view import NavbarView
 from app.screens.home_page.view.restaurant_view import RestaurantView
 from app.screens.home_page.view.sidebar_view import SidebarView
-from app.screens.home_page.restaurant_rooms import RoomsManager, Room, RoomObject
+from app.db.restaurant_rooms import RoomsManager
 
 
 class HomePageScreen(QWidget):

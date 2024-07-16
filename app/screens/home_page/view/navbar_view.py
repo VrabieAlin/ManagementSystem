@@ -1,13 +1,10 @@
-import sys
-from PySide6.QtWidgets import QPushButton, QWidget, QVBoxLayout, QHBoxLayout, QScrollArea, QPushButton, QBoxLayout, \
-    QFrame
-from app.utils.widgets.widgets_utils import WidgetUtils
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PySide6.QtCore import Qt
 
-from app.screens.home_page.restaurant_rooms import RoomsManager, Room, RoomObject
+from app.db.restaurant_rooms import RoomsManager
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
-from app.screens.home_page.view.elements.navbar_item import ImageLabelWidget
-from app.utils.constants import Colors
+from app.utils.widgets.buttons.image_button import ImageLabelWidget
+
 
 class NavbarView(QWidget):
     def __init__(self, main_window, **kwargs):
