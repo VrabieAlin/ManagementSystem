@@ -34,21 +34,22 @@ class NavbarView(QWidget):
         #button_background_widget.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY};")
         hbox_layout = QHBoxLayout(button_background_widget)
         hbox_layout.setContentsMargins(0, 0, 0, 0)
+        hbox_layout.setSpacing(20)
 
 
         # Creează butoane cu dimensiuni specifice
         for room in self.restaurant_rooms:
-
             button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name)
             #button.setMinimumWidth(200)
             #button.setMaximumWidth(300)
-            hbox_layout.addWidget(button, alignment=Qt.AlignHCenter)
+            hbox_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Adaugă spatiere la QHBoxLayout dupa butoane pentru a le muta la stanga
         hbox_layout.addStretch(1)
 
         # Creează un QScrollArea și setează scroll_content ca widget conținut
         scroll_area = CustomScrollArea()
+        scroll_area.setFixedHeight(200)
         scroll_area.setFrameShape(QFrame.NoFrame)
         scroll_area.setWidget(button_background_widget)
 
