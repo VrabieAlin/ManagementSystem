@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QWidget, QGridLayout
 from app.screens.home_page.view.navbar_view import NavbarView
 from app.screens.home_page.view.restaurant_view import RestaurantView
 from app.screens.home_page.view.sidebar_view import SidebarView
-from app.db.restaurant_rooms import RoomsManager
 
 
 class HomePageScreen(QWidget):
@@ -11,7 +10,6 @@ class HomePageScreen(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
-        self.rooms_manager = RoomsManager(main_window.db_manager)
 
         self.setLayout(self.loadViews())
 
@@ -22,9 +20,9 @@ class HomePageScreen(QWidget):
         grid_layout.setVerticalSpacing(0)
 
         # Init views
-        navbar = NavbarView(self.main_window, rooms_manager=self.rooms_manager)
+        navbar = NavbarView(self.main_window)
         side_bar = SidebarView(self.main_window)
-        restaurant_view = RestaurantView(self.main_window, rooms_manager=self.rooms_manager)
+        restaurant_view = RestaurantView(self.main_window)
 
         grid_layout.addWidget(navbar, 0, 0, 1, 2)
         grid_layout.addWidget(restaurant_view, 1, 0)

@@ -1,5 +1,8 @@
 import sqlite3
+
 from app.utils.constants import DataBase
+from app.utils.utils import dict_factory
+
 
 class DBManager():
     def __init__(self):
@@ -7,6 +10,7 @@ class DBManager():
 
     def init_db(self):
         self.conn = sqlite3.connect(DataBase.BD_NAME)
+        self.conn.row_factory = dict_factory
         self.cursor = self.conn.cursor()
 
         # Creare tabel rooms

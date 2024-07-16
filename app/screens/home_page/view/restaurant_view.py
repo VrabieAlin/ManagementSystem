@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 
 class RestaurantView(QWidget):
-    def __init__(self, main_window, **kwargs):
+    def __init__(self, main_window):
         super(RestaurantView, self).__init__()
         self.main_window = main_window
 
