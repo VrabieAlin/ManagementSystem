@@ -1,5 +1,6 @@
 class ScreenNames:
     HOME_PAGE = "Home Page"
+    ORDER_PAGE = "Order Page"
 
 
 class Colors:

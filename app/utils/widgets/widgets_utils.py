@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QPushButton, QSizePolicy, QLineEdit, QVBoxLayout, 
 
 from app.utils.constants import InputType
 from PySide6.QtWidgets import QPushButton, QSizePolicy
-from app.utils.widgets.buttons.main_button import PrimaryButton
+from app.utils.widgets.Buttons.main_button import PrimaryButton
 
 
 class WidgetUtils:
