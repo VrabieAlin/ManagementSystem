@@ -1,14 +1,14 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
 
 from app.utils.constants import Colors, BorderType, Texts, InputType
 from app.utils.css_utils import CSSUtils
 from app.utils.widgets.input_modal import InputModal
+from app.utils.widgets.labels.custom_lable_1 import CustomLabel1
 from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
-from app.utils.widgets.Labels.custom_lable_1 import CustomLabel1
-from state.state_manager import StateManager
+from app.state.state_manager import StateManager
 
 
 class SidebarView(QWidget):

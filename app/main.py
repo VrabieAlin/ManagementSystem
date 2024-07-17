@@ -3,7 +3,7 @@ from app.utils.constants import ScreenNames
 from app.screens.home_page.home_page_screen import HomePageScreen
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
-from app.DataBase.DB_manager import DBManager
+from app.db.db_manager import DBManager
 from PySide6.QtGui import QPalette, QColor
 
 '''
