@@ -2,8 +2,8 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PySide6.QtCore import Qt
 
 from app.db.location_rooms import LocationRoom
+from app.utils.widgets.buttons.image_button import ImageLabelWidget
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
-from app.utils.widgets.Buttons.image_button import ImageLabelWidget
 
 
 class NavbarView(QWidget):
