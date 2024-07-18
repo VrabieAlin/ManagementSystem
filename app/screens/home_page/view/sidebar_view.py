@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
 from app.utils.constants import Colors, BorderType, Texts, InputType
 from app.utils.css_utils import CSSUtils
 from app.utils.widgets.input_modal import InputModal
-from app.utils.widgets.labels.custom_lable_1 import CustomLabel1
+from app.utils.widgets.Labels.custom_lable_1 import CustomLabel1
 from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
@@ -16,11 +16,11 @@ class SidebarView(QWidget):
         super().__init__()
         self.main_window = main_window
         self.state_manager = StateManager.instance()
-        self.setLayout(self.loadViews())
+        self.setLayout(self.load_view())
         # self.apply_css()
         self.apply_view_logic()
 
-    def loadViews(self):
+    def load_view(self):
         # Create QVBoxLayout to place elements vertically
         self.vbox_layout = QVBoxLayout()
         self.vbox_layout.setContentsMargins(0, 0, 0, 0)

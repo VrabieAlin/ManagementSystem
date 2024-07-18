@@ -1,6 +1,7 @@
 
 from app.utils.constants import ScreenNames
 from app.screens.home_page.home_page_screen import HomePageScreen
+from app.screens.order_page.order_page_screen import OrderPage
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from app.db.db_manager import DBManager
@@ -28,6 +29,7 @@ class MyApp(QMainWindow):
 
         self.screens = {}
         self.screen_manager = QStackedWidget()
+        self.setContentsMargins(0, 0, 0, 0)
 
         #Set background collor
         p = self.palette()
@@ -44,7 +46,16 @@ class MyApp(QMainWindow):
         self.screen_manager.addWidget(self.home_screen)
         self.screens[ScreenNames.HOME_PAGE] = self.screen_manager.indexOf(self.home_screen)
 
+        #Order Screen
+        self.order_screen = OrderPage(self)
+
+
+        self.screen_manager.addWidget(self.order_screen)
+        self.screens[ScreenNames.ORDER_PAGE] = self.screen_manager.indexOf(self.order_screen)
+
+        #Set main screen
         self.setCentralWidget(self.screen_manager)
+        self.set_screen(ScreenNames.ORDER_PAGE)
 
         # Set fullscreen mode
         self.showFullScreen()

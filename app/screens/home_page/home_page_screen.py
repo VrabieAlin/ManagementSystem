@@ -11,11 +11,12 @@ class HomePageScreen(QWidget):
         super().__init__()
         self.main_window = main_window
 
-        self.setLayout(self.loadViews())
+        self.setLayout(self.load_view())
 
-    def loadViews(self):
+    def load_view(self):
 
         grid_layout = QGridLayout()
+        grid_layout.setContentsMargins(0, 0, 0, 0)
         grid_layout.setHorizontalSpacing(0)
         grid_layout.setVerticalSpacing(0)
 
