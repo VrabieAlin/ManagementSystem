@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QWidget, QGridLayout
+from PySide6.QtCore import Qt
 
 from app.screens.order_page.view.top_bar import TopBarView
 from app.screens.order_page.view.check import CheckView
@@ -25,15 +26,15 @@ class OrderPage(QWidget):
 
         #-----Arangements-----
         main_layout.addWidget(top_bar, 0, 0, 1, 2)
-        main_layout.addWidget(check, 1, 0, 2, 1)
-        main_layout.addWidget(category_menu, 1, 1, 1, 1)
+        main_layout.addWidget(check, 2, 0, 1, 1)
+        main_layout.addWidget(category_menu, 1, 0, 1, 2)
         main_layout.addWidget(products_menu, 2, 1, 1, 1)
         main_layout.addWidget(options, 3, 0, 1, 2)
 
         #-----Resizing-----
         main_layout.setRowStretch(0, 2)
-        main_layout.setRowStretch(1, 15)
-        main_layout.setRowStretch(2, 65)
+        main_layout.setRowStretch(1, 10)
+        main_layout.setRowStretch(2, 70)
         main_layout.setRowStretch(3, 18)
 
         main_layout.setColumnStretch(0, 40)

@@ -21,6 +21,14 @@ class DBManager():
                     )
                 """)
 
+        # Creare tabel categories
+        self.cursor.execute("""
+                            CREATE TABLE IF NOT EXISTS categories (
+                                id INTEGER PRIMARY KEY,
+                                name TEXT
+                            )
+                        """)
+
         # Creare tabel objects
         self.cursor.execute("""
                     CREATE TABLE IF NOT EXISTS room_objects (

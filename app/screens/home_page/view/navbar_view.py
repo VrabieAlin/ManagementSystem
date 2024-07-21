@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PySide6.QtCore import Qt
 
 from app.db.location_rooms import LocationRoom
-from app.utils.widgets.buttons.image_button import ImageLabelWidget
+from app.utils.widgets.Buttons.image_button import ImageLabelWidget
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 
 
@@ -41,7 +41,7 @@ class NavbarView(QWidget):
         # Creează un QScrollArea și setează scroll_content ca widget conținut
         scroll_area = CustomScrollArea()
         scroll_area.setFixedHeight(200)
-        scroll_area.setFrameShape(QFrame.NoFrame)
+        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
         scroll_area.setWidget(button_background_widget)
 
         # Adaugă QWidget-ul cu butoane în layout-ul principal
