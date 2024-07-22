@@ -1,7 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
 
-from app.utils.constants import Colors, BorderType, Texts, InputType
+from app.utils.constants import Colors, BorderType, Texts, InputType, ScreenNames
 from app.utils.css_utils import CSSUtils
 from app.utils.widgets.input_modal import InputModal
 from app.utils.widgets.labels.custom_lable_1 import CustomLabel1
@@ -69,7 +69,7 @@ class SidebarView(QWidget):
 
     def show_menu_modal(self):
         # Complete these with const text class when options will be detailed
-        menu_modal = MenuModal(["teste", "teste1", "teste2", "teste3", "teste4", "teste5", "teste6",
+        menu_modal = MenuModal([Texts.LOCATION_EDITOR, "teste1", "teste2", "teste3", "teste4", "teste5", "teste6",
                                 "teste7", "teste8"])
         menu_modal.menu_button.connect(self.on_modal_menu_selected)
         menu_modal.exec()
@@ -87,8 +87,8 @@ class SidebarView(QWidget):
         pass
 
     def on_modal_menu_selected(self, text):
-        pass
-        # Create a switch based on btn text from text const class to handle actions
+        if text == Texts.LOCATION_EDITOR:
+            self.main_window.set_screen(ScreenNames.LOCATION_VIEW_EDITOR_PAGE)
 
     def logout(self):
         self.state_manager.logout()
