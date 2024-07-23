@@ -1,8 +1,8 @@
-from PySide6.QtCore import Qt, QRectF
+from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 
-from app.screens.location_view_editor.views.dragable_item import DraggableItem
+from app.screens.location_view_editor.views.draggable_object import DraggableObject
 
 
 class LocationEditorBoard(QGraphicsView):
@@ -30,10 +30,17 @@ class LocationEditorBoard(QGraphicsView):
         if event.mimeData().hasFormat('application/x-dnditemdata'):
             byte_array = event.mimeData().data('application/x-dnditemdata')
             data = byte_array.data().decode('utf-8')
-            x, y, width, height = map(int, data.split(','))
-            new_item = DraggableItem(QRectF(0, 0, width, height))
-            new_item.setPos(self.mapToScene(event.pos()))
-            self.scene().addItem(new_item)
+            width, height, hot_x, hot_y = map(int, data.split(','))
+
+            # Calculate the new position by adjusting for the hotspot
+            drop_pos = self.mapToScene(event.pos())
+            new_pos = drop_pos - QPoint(hot_x, hot_y)
+
+            # Create a new DraggableObject at the dropped position
+            new_object = DraggableObject("Dragged")
+            proxy_widget = self.scene().addWidget(new_object)
+            proxy_widget.setPos(new_pos)
+
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:

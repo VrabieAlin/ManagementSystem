@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QGridLayout
 
 from app.screens.home_page.view.navbar_view import NavbarView
-from app.screens.location_view_editor.views.dragbutton import DragButton
+from app.screens.location_view_editor.views.draggable_object import DraggableObject
 from app.screens.location_view_editor.views.location_editor_board import LocationEditorBoard
 
 
@@ -19,7 +19,7 @@ class LocationViewEditorScreen(QWidget):
 
         # Init views
         navbar = NavbarView(self.main_window)
-        side_bar = DragButton('Drag me')
+        side_bar = DraggableObject('Drag me',True)
         editor_view = LocationEditorBoard()
 
         grid_layout.addWidget(navbar, 0, 0, 1, 2)
