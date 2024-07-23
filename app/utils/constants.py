@@ -1,6 +1,7 @@
 class ScreenNames:
     HOME_PAGE = "Home Page"
     ORDER_PAGE = "Order Page"
+    LOCATION_VIEW_EDITOR_PAGE = "Location View Editor Page"
 
 
 class Colors:
@@ -21,6 +22,7 @@ class BorderType:
 
 
 class Texts:
+    LOCATION_EDITOR = "Editeaza locatia"
     LOGIN = "Login"
     LOGOUT = "Logout"
     MENU = "Menu"
