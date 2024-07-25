@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PySide6.QtCore import Qt
 
 from app.db.location_rooms import LocationRoom
-from app.utils.widgets.Buttons.image_button import ImageLabelWidget
+from app.utils.widgets.buttons.image_button import ImageLabelWidget
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 
 
@@ -22,7 +22,6 @@ class NavbarView(QWidget):
 
         # Creează un QWidget pentru a acționa ca fundal pentru butoane
         button_background_widget = QWidget()
-        # button_background_widget.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY};")
         hbox_layout = QHBoxLayout(button_background_widget)
         hbox_layout.setContentsMargins(0, 0, 0, 0)
         hbox_layout.setSpacing(20)
@@ -31,8 +30,6 @@ class NavbarView(QWidget):
         # Creează butoane cu dimensiuni specifice
         for room in restaurant_rooms:
             button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name)
-            # button.setMinimumWidth(200)
-            # button.setMaximumWidth(300)
             hbox_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Adaugă spatiere la QHBoxLayout dupa butoane pentru a le muta la stanga
