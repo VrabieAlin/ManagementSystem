@@ -2,7 +2,7 @@
 from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QLabel, QSizePolicy
 from functools import partial
 
-from app.utils.widgets.Buttons.main_button import PrimaryButton
+from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
 from app.screens.order_page.model.db_loader import OrderDB
@@ -34,16 +34,16 @@ class ProductsMenuView(QWidget):
 
         self.current_products_page = 0 #The product page, on each page contains { max_cols x max_rows } products
 
-        if self.current_products_list > 0:
-            #Crate a pagination for products, on each page contains { max_cols x max_rows } products, last page may have less products
-            page_size = (self.max_rows + 1) * (self.max_cols + 1)
-            for index in range(0, len(self.current_products_list), page_size):
-                page = self.current_products_list[index : index + page_size]
-                self.products_pages.append(page)
 
-            #Fill last page with default elements to have same size as the others
-            while len(self.products_pages[-1]) < page_size:
-                self.products_pages[-1].append({'id': -1, 'name': ''})
+        #Crate a pagination for products, on each page contains { max_cols x max_rows } products, last page may have less products
+        page_size = (self.max_rows + 1) * (self.max_cols + 1)
+        for index in range(0, len(self.current_products_list), page_size):
+            page = self.current_products_list[index : index + page_size]
+            self.products_pages.append(page)
+
+        #Fill last page with default elements to have same size as the others
+        while len(self.products_pages[-1]) < page_size:
+            self.products_pages[-1].append({'id': -1, 'name': ''})
 
 
     def load_view(self):
@@ -79,7 +79,7 @@ class ProductsMenuView(QWidget):
         current_col = 0
 
         for product in self.products_pages[self.current_products_page]:
-            product_button = QPushButton(product.name)
+            product_button = QPushButton(product['name'])
             product_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             products_area.addWidget(product_button, current_row, current_col)
             current_col += 1

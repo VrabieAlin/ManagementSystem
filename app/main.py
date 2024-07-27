@@ -5,6 +5,8 @@ from app.screens.order_page.order_page_screen import OrderPage
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from app.db.db_manager import DBManager
+from app.db.for_testing.db_populator import DBInserter
+
 from PySide6.QtGui import QPalette, QColor
 
 '''
@@ -26,6 +28,7 @@ class MyApp(QMainWindow):
         super().__init__()
         #init db manager
         self.db_manager = DBManager()
+        self.db_insertor_for_testing = DBInserter(self.db_manager).populate_tables()
 
         self.screens = {}
         self.screen_manager = QStackedWidget()
