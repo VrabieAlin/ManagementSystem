@@ -1,3 +1,6 @@
+from box import Box
+
+
 class LocationRoomObject:
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -10,3 +13,8 @@ class LocationRoomObject:
         for (object_id, owner_room_id, pos_x, pos_y, size_x, size_y, rotation, image_id, name) in objects:
             table = LocationRoomObject()
             room.objects.append(table)
+
+    def load_default_objects(self):
+        self.db_manager.cursor.execute("SELECT * from location_editor_objects")
+        objects = self.db_manager.cursor.fetchall()
+        return [Box(o) for o in objects]

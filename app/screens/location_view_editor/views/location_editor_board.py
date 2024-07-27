@@ -1,6 +1,6 @@
-from PySide6.QtCore import Qt, QPoint
-from PySide6.QtGui import QPainter
-from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
+from PySide6.QtCore import Qt, QPoint, QPointF
+from PySide6.QtGui import QPainter, QPen, QColor
+from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QGraphicsLineItem
 
 from app.screens.location_view_editor.views.draggable_object import DraggableObject
 
@@ -12,6 +12,50 @@ class LocationEditorBoard(QGraphicsView):
         self.setAcceptDrops(True)
         self.setRenderHint(QPainter.Antialiasing)
         self.scene().setSceneRect(0, 0, 800, 600)
+        self.guidelines = []  # To store reference to guidelines
+        self.item_positions = []  # To track item positions
+
+
+
+    def draw_guidelines(self, item=None):
+        # Clear existing guidelines
+        for line in self.guidelines:
+            self.scene().removeItem(line)
+        self.guidelines.clear()
+
+        if item is None:
+            return
+
+        # Get all items in the scene
+        items = self.scene().items()
+        item_rect = item.sceneBoundingRect()
+
+        for existing_item in items:
+            if isinstance(existing_item, QGraphicsProxyWidget):
+                existing_rect = existing_item.sceneBoundingRect()
+                x1 = existing_rect.left()
+                x2 = existing_rect.right()
+                y1 = existing_rect.top()
+                y2 = existing_rect.bottom()
+
+                # Vertical guides
+                self.add_guide(x1, 0, x1, self.sceneRect().height())
+                self.add_guide(x2, 0, x2, self.sceneRect().height())
+
+                # Horizontal guides
+                self.add_guide(0, y1, self.sceneRect().width(), y1)
+                self.add_guide(0, y2, self.sceneRect().width(), y2)
+
+    def add_guide(self, x1, y1, x2, y2):
+        line = QGraphicsLineItem(x1, y1, x2, y2)
+        line.setPen(QPen(QColor(255, 0, 0, 255), 1, Qt.DashLine))
+        self.guidelines.append(line)
+        self.scene().addItem(line)
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+        if self.dragging_item:
+            self.draw_guidelines(self.dragging_item)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('application/x-dnditemdata'):
@@ -32,12 +76,11 @@ class LocationEditorBoard(QGraphicsView):
             data = byte_array.data().decode('utf-8')
             width, height, hot_x, hot_y = map(int, data.split(','))
 
-            # Calculate the new position by adjusting for the hotspot
             drop_pos = self.mapToScene(event.pos())
-            new_pos = drop_pos - QPoint(hot_x, hot_y)
+            snap_pos = self.snap_to_guidelines(drop_pos)
+            new_pos = snap_pos - QPointF(hot_x, hot_y)
 
-            # Create a new DraggableObject at the dropped position
-            new_object = DraggableObject("Dragged")
+            new_object = DraggableObject("static/location_navbar_icon_without_bg.png", always_visible=False)
             proxy_widget = self.scene().addWidget(new_object)
             proxy_widget.setPos(new_pos)
 
@@ -45,3 +88,14 @@ class LocationEditorBoard(QGraphicsView):
             event.accept()
         else:
             event.ignore()
+
+    def snap_to_guidelines(self, pos):
+        # Adjust this method to snap to guidelines if necessary
+        return pos
+
+    def start_drag(self, item):
+        self.dragging_item = item
+
+    def end_drag(self):
+        self.dragging_item = None
+        self.draw_guidelines()
