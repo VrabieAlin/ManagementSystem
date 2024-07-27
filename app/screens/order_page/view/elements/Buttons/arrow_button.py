@@ -12,7 +12,13 @@ class ArrowButton(QPushButton):
 
     def set_availability(self, available = True):
         self.available = available
-        self.set_style()
+        if self.available:
+            self.show()
+            self.set_style()
+        else:
+            self.hide()
+
+
 
     def set_style(self):
         self.setStyleSheet(f"""
