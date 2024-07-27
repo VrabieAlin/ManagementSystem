@@ -58,6 +58,19 @@ class DBManager():
                     )
                 """)
 
+        # Creare tabel pt editor de locatie cu obiectele predefinite
+        self.cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS location_editor_objects (
+                        `id` integer not null primary key autoincrement,
+                        `name` TEXT not null,
+                        `category` TEXT not null,
+                         unique (`id`)
+                    )
+                """)
+        self.cursor.execute("""
+                    insert or ignore into `location_editor_objects` (`category`, `id`, `name`) values ('Utilitare', '1', 'Masa')
+                """)
+
         self.conn.commit()
 
 #For testing: INSERT INTO test (text_column, integer_column, double_column) VALUES ('Some text', 42, 3.14);
