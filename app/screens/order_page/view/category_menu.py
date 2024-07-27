@@ -25,13 +25,14 @@ class CategoryMenuView(QWidget):
         self.right_arrow = self.create_right_arrow_widget() #Right arrow button
 
         self.positioning_elements()
+        self.check_arrow_availability()
 
         self.setLayout(self.main_layout)
 
     def create_layout_layout(self) -> QGridLayout:
         main_layout = QGridLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(10)
+        main_layout.setSpacing(5)
 
         return main_layout
 
@@ -48,6 +49,17 @@ class CategoryMenuView(QWidget):
             except Exception as e:
                 print(f"Categoria {category.name} nu s-a putut initializa ({e})")
 
+        self.categories_layout.addWidget(PrimaryButton("Pizza1"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza2"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza3"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza4"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza5"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza6"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza7"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza8"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza9"))
+        self.categories_layout.addWidget(PrimaryButton("Pizza10"))
+
 
         self.categories_layout.addStretch(1)
 
@@ -61,7 +73,7 @@ class CategoryMenuView(QWidget):
 
     def create_left_arraw_widget(self):
         # Left arrow
-        left_arrow = ArrowButton("<<", available=False)
+        left_arrow = ArrowButton("<<")
         left_arrow.clicked.connect(partial(self.scroll_direction, direction="left"))
 
         return left_arrow
@@ -83,7 +95,25 @@ class CategoryMenuView(QWidget):
         self.main_layout.setColumnStretch(2, 1)
 
 
+    def check_arrow_availability(self):
+        horizontal_scrollbar = self.scroll_area.horizontalScrollBar()
 
+        can_scroll_left = horizontal_scrollbar.value() > horizontal_scrollbar.minimum()
+        can_scroll_right = horizontal_scrollbar.value() < horizontal_scrollbar.maximum()
+
+        if can_scroll_left:
+            self.left_arrow.show()
+            self.main_layout.setColumnStretch(0, 1)
+        else:
+            self.left_arrow.hide()
+            self.main_layout.setColumnStretch(0, 0)
+
+        if can_scroll_right:
+            self.right_arrow.show()
+            self.main_layout.setColumnStretch(2, 1)
+        else:
+            self.right_arrow.hide()
+            self.main_layout.setColumnStretch(2, 0)
 
     def scroll_direction(self, direction="right"):
         if self.categories_layout.count() > 0:
@@ -98,25 +128,15 @@ class CategoryMenuView(QWidget):
                 new_value = scrollbar.value() + scroll_value
                 if new_value > scrollbar.maximum():
                     scrollbar.setValue(scrollbar.maximum())
-                    self.right_arrow.set_availability(available=False)
-                    self.right_arrow.setDown(True)
-                    self.left_arrow.set_availability(available=True)
-                    self.left_arrow.setDown(False)
                 else:
                     scrollbar.setValue(new_value)
-                    self.left_arrow.set_availability(available=True)
-                    self.left_arrow.setDown(False)
             else:
                 # Calculează noua valoare a scroll-ului
                 new_value = scrollbar.value() - scroll_value
                 if new_value < scrollbar.minimum():
                     scrollbar.setValue(scrollbar.minimum())
-                    self.left_arrow.set_availability(available=False)
-                    self.left_arrow.setDown(True)
-                    self.right_arrow.set_availability(available=True)
-                    self.right_arrow.setDown(False)
                 else:
                     scrollbar.setValue(new_value)
-                    self.right_arrow.set_availability(available=True)
-                    self.right_arrow.setDown(False)
+
+            self.check_arrow_availability()
 

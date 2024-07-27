@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from app.utils.constants import Colors
 
 class ArrowButton(QPushButton):
-    def __init__(self, text, available = True, parent=None):
+    def __init__(self, text, available=True, parent=None):
         super().__init__(text, parent)
         self.available = available
         self.setFixedSize(100, 100)
@@ -14,11 +14,9 @@ class ArrowButton(QPushButton):
         self.available = available
         if self.available:
             self.show()
-            self.set_style()
         else:
             self.hide()
-
-
+        self.set_style()
 
     def set_style(self):
         self.setStyleSheet(f"""

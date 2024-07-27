@@ -23,8 +23,8 @@ class ProductsMenuView(QWidget):
     def load_view(self):
         self.main_layout = self.create_layout_layout()
         self.products_area = self.create_products_area_layout()  # Area with products to be selected
-        #self.left_arrow = self.create_left_arraw_widget()  # Left arrow button
-        #self.right_arrow = self.create_right_arrow_widget()  # Right arrow button
+        self.left_arrow = self.create_left_arraw_widget()  # Left arrow button
+        self.right_arrow = self.create_right_arrow_widget()  # Right arrow button
 
         self.positioning_elements()
 
@@ -100,8 +100,25 @@ class ProductsMenuView(QWidget):
 
         return products_area
 
+    def create_left_arraw_widget(self):
+        button = QPushButton(">>")
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        return button
+
+    def create_right_arrow_widget(self):
+        button = QPushButton("<<")
+        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        return button
+
     def positioning_elements(self):
-        self.main_layout.addLayout(self.products_area, 0, 0)
+        self.main_layout.addLayout(self.products_area, 0, 0, 1, 2)
+        self.main_layout.addWidget(self.right_arrow, 1, 0, 1, 1)
+        self.main_layout.addWidget(self.left_arrow, 1, 1, 1, 1)
+
+        self.main_layout.setRowStretch(0, 10)
+        self.main_layout.setRowStretch(1, 1) #TO DO: Verific daca trebuie pusa o salgeata, daca nu, o scot de tot, daca trebuie pusa doar o sageata o pun pe intregul spatiu, daca trebuie amandoua le pun pe jumate jumate (cum e acum)
 
     def load_products(self):
         print(f"Noua categorie de unde trebuie sa incarc produsele este categoria {self.order_page.order_page_state['current_category']}")
