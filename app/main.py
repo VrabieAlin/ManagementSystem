@@ -1,4 +1,4 @@
-
+from app.screens.location_view_editor.location_view_editor_screen import LocationViewEditorScreen
 from app.utils.constants import ScreenNames
 from app.screens.home_page.home_page_screen import HomePageScreen
 from app.screens.order_page.order_page_screen import OrderPage
@@ -49,13 +49,18 @@ class MyApp(QMainWindow):
         #Order Screen
         self.order_screen = OrderPage(self)
 
-
         self.screen_manager.addWidget(self.order_screen)
         self.screens[ScreenNames.ORDER_PAGE] = self.screen_manager.indexOf(self.order_screen)
 
+        #Business location editor Screen
+        self.location_view_editor_screen = LocationViewEditorScreen(self)
+
+        self.screen_manager.addWidget(self.location_view_editor_screen)
+        self.screens[ScreenNames.LOCATION_VIEW_EDITOR_PAGE] = self.screen_manager.indexOf(self.location_view_editor_screen)
+
         #Set main screen
         self.setCentralWidget(self.screen_manager)
-        self.set_screen(ScreenNames.ORDER_PAGE)
+        self.set_screen(ScreenNames.HOME_PAGE)
 
         # Set fullscreen mode
         self.showFullScreen()
