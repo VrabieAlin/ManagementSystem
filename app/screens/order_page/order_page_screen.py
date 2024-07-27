@@ -13,7 +13,6 @@ class OrderPage(QWidget):
         super().__init__()
         self.main_window = main_window
         self.order_db = OrderDB(self.main_window)
-        self.order_page_state = {'current_category': 1}
 
         self.setLayout(self.load_view())
 
@@ -24,8 +23,8 @@ class OrderPage(QWidget):
 
         #-----Elements-----
         self.top_bar = TopBarView(main_window=self.main_window)
-        self.category_menu = CategoryMenuView(main_window=self.main_window, order_db=self.order_db, order_page=self)
-        self.products_menu = ProductsMenuView(main_window=self.main_window, order_db=self.order_db, order_page=self)
+        self.category_menu = CategoryMenuView(main_window=self.main_window, order_db=self.order_db)
+        self.products_menu = ProductsMenuView(main_window=self.main_window, order_db=self.order_db)
         self.check = CheckView(main_window=self.main_window)
         self.options = OptionsView(main_window=self.main_window)
 
@@ -47,10 +46,6 @@ class OrderPage(QWidget):
 
         return main_layout
 
-    def change_category(self, new_category_id):
-        print(f"Categoria de produse a fost schimbata din {self.order_page_state['current_category']} in {new_category_id}")
-        self.order_page_state['current_category'] = new_category_id
-        self.products_menu.load_products()
 
 
 

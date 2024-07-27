@@ -15,6 +15,8 @@ class StateManager(QObject):
         self.file_path = "state.json"
         self.logged_in = False
         self.user_name = None
+        self.order_page_state = {'current_category': 1}
+
         self.load_state()
 
     def load_state(self):
@@ -23,6 +25,7 @@ class StateManager(QObject):
                 data = json.load(file)
                 self.logged_in = data.get("logged_in", False)
                 self.user_name = data.get("user_name", None)
+                self.order_page_state = data.get("order_page_state", {'current_category': 1})
 
     @save_after()
     def login(self, user_name):
@@ -33,3 +36,7 @@ class StateManager(QObject):
     def logout(self):
         self.logged_in = False
         self.user_name = None
+
+    @save_after()
+    def change_category(self, new_category_id):
+        self.order_page_state['current_category'] = new_category_id

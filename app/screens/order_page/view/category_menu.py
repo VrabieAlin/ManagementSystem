@@ -7,13 +7,14 @@ from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
 from app.screens.order_page.model.db_loader import OrderDB
+from app.state.state_manager import StateManager
 
 class CategoryMenuView(QWidget):
-    def __init__(self, main_window, order_db: OrderDB=None, order_page=None):
+    def __init__(self, main_window, order_db: OrderDB=None):
         super().__init__()
         self.main_window = main_window
         self.order_db = order_db
-        self.order_page = order_page
+        self.state_manager = StateManager.instance()
 
         self.categories = self.order_db.load_categories()
         self.load_view()
@@ -44,21 +45,11 @@ class CategoryMenuView(QWidget):
         for category in self.categories:
             try:
                 category_button = PrimaryButton(category.name)
-                category_button.clicked.connect(partial(self.order_page.change_category, category.id))
+                #category_button.clicked.connect(focus_button)
+                category_button.clicked.connect(partial(StateManager.instance().change_category, category.id))
                 self.categories_layout.addWidget(category_button)
             except Exception as e:
                 print(f"Categoria {category.name} nu s-a putut initializa ({e})")
-
-        self.categories_layout.addWidget(PrimaryButton("Pizza1"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza2"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza3"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza4"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza5"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza6"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza7"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza8"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza9"))
-        self.categories_layout.addWidget(PrimaryButton("Pizza10"))
 
 
         self.categories_layout.addStretch(1)
