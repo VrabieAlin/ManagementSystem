@@ -11,14 +11,40 @@ from app.utils.constants import Colors
 
 
 class ProductsMenuView(QWidget):
+    max_cols = 4
+    max_rows = 3
+    products_pages = []
     def __init__(self, main_window, order_db: OrderDB=None, order_page=None):
         super().__init__()
         self.main_window = main_window
         self.order_db = order_db
         self.order_page = order_page
 
-        self.products = self.order_db.get_products()
+
+        self.load_logic()
+
         self.load_view()
+
+    def load_logic(self):
+        self.products = self.order_db.get_products()
+        self.products_pages = []
+
+        self.current_category_id = self.order_page.order_page_state['current_category']
+        self.current_products_list = self.products[self.current_category_id]
+
+        self.current_products_page = 0 #The product page, on each page contains { max_cols x max_rows } products
+
+        if self.current_products_list > 0:
+            #Crate a pagination for products, on each page contains { max_cols x max_rows } products, last page may have less products
+            page_size = (self.max_rows + 1) * (self.max_cols + 1)
+            for index in range(0, len(self.current_products_list), page_size):
+                page = self.current_products_list[index : index + page_size]
+                self.products_pages.append(page)
+
+            #Fill last page with default elements to have same size as the others
+            while len(self.products_pages[-1]) < page_size:
+                self.products_pages[-1].append({'id': -1, 'name': ''})
+
 
     def load_view(self):
         self.main_layout = self.create_layout_layout()
@@ -48,32 +74,21 @@ class ProductsMenuView(QWidget):
         products_area = QGridLayout()
         products_area.setContentsMargins(0, 0, 0, 0)
         products_area.setSpacing(5)
-        max_cols = 4
-        max_rows = 3
-
-        current_category_id = self.order_page.order_page_state['current_category']
-        current_product_list = self.products[current_category_id]
 
         current_row = 0
         current_col = 0
-        for product in current_product_list:
+
+        for product in self.products_pages[self.current_products_page]:
             product_button = QPushButton(product.name)
             product_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             products_area.addWidget(product_button, current_row, current_col)
             current_col += 1
-            if current_col > max_cols:
+            if current_col > self.max_cols:
                 current_col = 0
                 current_row += 1
-            #product_name_label = QLabel(product.name)
+            if current_row > self.max_rows:
+                break
 
-        while self.get_number_of_widgets(products_area) < 20:
-            empty_button = QPushButton()
-            empty_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-            products_area.addWidget(empty_button, current_row, current_col)
-            current_col += 1
-            if current_col > max_cols:
-                current_col = 0
-                current_row += 1
 
         products_area.setColumnStretch(0, 1)
         products_area.setColumnStretch(1, 1)
@@ -118,10 +133,17 @@ class ProductsMenuView(QWidget):
         self.main_layout.addWidget(self.left_arrow, 1, 1, 1, 1)
 
         self.main_layout.setRowStretch(0, 10)
-        self.main_layout.setRowStretch(1, 1) #TO DO: Verific daca trebuie pusa o salgeata, daca nu, o scot de tot, daca trebuie pusa doar o sageata o pun pe intregul spatiu, daca trebuie amandoua le pun pe jumate jumate (cum e acum)
+        self.main_layout.setRowStretch(1, 1) #TO DO: Verific daca trebuie pusa o sageata, daca nu, o scot de tot, daca trebuie pusa doar o sageata o pun pe intregul spatiu, daca trebuie amandoua le pun pe jumate jumate (cum e acum)
+
+    def check_arraows(self):
+        if self.current_products_page >= len(self.products_pages):
+            #Nu avem nevoie de left arrow
+            self.left_arrow.hide()
+            #....set ROW/Column stretch
 
     def load_products(self):
         print(f"Noua categorie de unde trebuie sa incarc produsele este categoria {self.order_page.order_page_state['current_category']}")
+
     def scroll_direction(self, direction="right"):
         if self.categories_layout.count() > 0:
             # Obține bara de derulare verticală
