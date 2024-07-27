@@ -29,6 +29,19 @@ class DBManager():
                             )
                         """)
 
+        # Creare tabel products of each category
+        self.cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS products (
+                            id INTEGER PRIMARY KEY,
+                            category_id INTEGER DEFAULT -1,
+                            name TEXT DEFAULT '',
+                            price DOUBLE DEFAULT -1,
+                            description TEXT DEFAULT '',
+                            recipe_id INTEGER DEFAULT -1,
+                            order_in_list INTEGER DEFAULT -1
+                        )
+                    """)
+
         # Creare tabel objects
         self.cursor.execute("""
                     CREATE TABLE IF NOT EXISTS room_objects (
@@ -59,3 +72,5 @@ class DBManager():
                 """)
 
         self.conn.commit()
+
+#For testing: INSERT INTO test (text_column, integer_column, double_column) VALUES ('Some text', 42, 3.14);
