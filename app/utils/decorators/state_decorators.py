@@ -19,5 +19,7 @@ def save_state(self):
     with open(self.file_path, "w") as file:
         json.dump({
             "logged_in": self.logged_in,
-            "user_name": self.user_name}, file)
+            "user_name": self.user_name,
+            "order_page_state": self.order_page_state}, file)
+
         self.state_changed.emit()

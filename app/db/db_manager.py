@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 from app.utils.constants import DataBase
 from app.utils.utils import dict_factory
@@ -6,6 +7,7 @@ from app.utils.utils import dict_factory
 
 class DBManager():
     def __init__(self):
+        self.delete_db() # ASV: WARNING: ONLY FOR TESTS
         self.init_db()
 
     def init_db(self):
@@ -73,4 +75,8 @@ class DBManager():
 
         self.conn.commit()
 
+    def delete_db(self):
+        # Ștergem fișierul de bază de date, dacă există
+        if os.path.exists(DataBase.BD_NAME):
+            os.remove(DataBase.BD_NAME)
 #For testing: INSERT INTO test (text_column, integer_column, double_column) VALUES ('Some text', 42, 3.14);
