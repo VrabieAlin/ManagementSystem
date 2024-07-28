@@ -5,8 +5,8 @@ from PySide6.QtCore import Qt, QPoint
 class CustomScrollArea(QScrollArea):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setWidgetResizable(True)
         self.setMouseTracking(True)
         self.last_mouse_position = QPoint()

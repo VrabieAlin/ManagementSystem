@@ -37,8 +37,8 @@ class OrderPage(QWidget):
 
         #-----Resizing-----
         main_layout.setRowStretch(0, 2)
-        main_layout.setRowStretch(1, 10)
-        main_layout.setRowStretch(2, 70)
+        main_layout.setRowStretch(1, 13)
+        main_layout.setRowStretch(2, 67)
         main_layout.setRowStretch(3, 18)
 
         main_layout.setColumnStretch(0, 40)

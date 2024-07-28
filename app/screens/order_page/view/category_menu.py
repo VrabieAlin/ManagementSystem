@@ -1,7 +1,8 @@
 #Layout categoriile mari de produse
 
-from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QScrollArea, QAbstractScrollArea, QSizePolicy
 from functools import partial
+from PySide6.QtCore import Qt
 
 from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
@@ -37,28 +38,40 @@ class CategoryMenuView(QWidget):
 
         return main_layout
 
-    def create_scroll_area_widget(self) -> CustomScrollArea:
+    def create_scroll_area_widget(self) -> QScrollArea:
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.updateGeometry()
+        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+
+
         # Categories
-        button_background_widget = QWidget()
-        self.categories_layout = QHBoxLayout(button_background_widget)
+        self.button_background_widget = QWidget()
+        self.categories_layout = QHBoxLayout(self.button_background_widget)
+
+        scroll_area.setWidget(self.button_background_widget)
 
         for category in self.categories:
             try:
                 category_button = PrimaryButton(category.name)
                 #category_button.clicked.connect(focus_button)
                 category_button.clicked.connect(partial(StateManager.instance().change_category, category.id))
+                category_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
                 self.categories_layout.addWidget(category_button)
             except Exception as e:
                 print(f"Categoria {category.name} nu s-a putut initializa ({e})")
 
-
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
         self.categories_layout.addStretch(1)
 
-        # Creează un QScrollArea și setează scroll_content ca widget conținut
-        scroll_area = CustomScrollArea()
-        scroll_area.setMinimumHeight(120)
-        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
-        scroll_area.setWidget(button_background_widget)
+        self.button_background_widget.adjustSize()
+        self.button_background_widget.updateGeometry()
+        scroll_area.updateGeometry()
+        scroll_area.widget().resize(self.button_background_widget.sizeHint())
+        scroll_area.setMinimumWidth(self.button_background_widget.width())
+
 
         return scroll_area
 
