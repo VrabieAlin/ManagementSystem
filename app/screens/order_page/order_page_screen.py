@@ -17,6 +17,10 @@ class OrderPage(QWidget):
         self.setLayout(self.load_view())
 
 
+
+    def refresh_graphic(self):
+        self.category_menu.check_arrow_availability()
+
     def load_view(self):
         main_layout = QGridLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)

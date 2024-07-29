@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QScrollArea, QMainWindow
-from PySide6.QtCore import Qt, QPoint
+from PySide6.QtCore import Qt, QPoint, QSize
 
 class CustomScrollArea(QScrollArea):
     def __init__(self, parent=None):
@@ -10,8 +10,6 @@ class CustomScrollArea(QScrollArea):
         self.setWidgetResizable(True)
         self.setMouseTracking(True)
         self.last_mouse_position = QPoint()
-
-
 
     def mousePressEvent(self, event):
         self.last_mouse_position = event.pos()
