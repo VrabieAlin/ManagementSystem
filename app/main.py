@@ -63,7 +63,7 @@ class MyApp(QMainWindow):
 
         #Set main screen
         self.setCentralWidget(self.screen_manager)
-        self.set_screen(ScreenNames.ORDER_PAGE)
+        self.set_screen(ScreenNames.HOME_PAGE)
 
         # Set fullscreen mode
         self.showFullScreen()

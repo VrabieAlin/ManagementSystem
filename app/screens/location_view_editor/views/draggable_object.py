@@ -1,34 +1,49 @@
-from PySide6.QtCore import QMimeData, QByteArray
+from PySide6.QtCore import QMimeData, QByteArray, QSize
 from PySide6.QtGui import Qt, QDrag, QPixmap, QPainter, QIcon
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy
+
+from app.utils.constants import LocationEditorConstants
 
 
 class DraggableObject(QPushButton):
-    def __init__(self, image_path, always_visible=False):
+    def __init__(self, image_path, always_visible=False,
+                 canvas_size=QSize(LocationEditorConstants.CANVAS_WIDTH,LocationEditorConstants.CANVAS_HEIGHT)):
         super().__init__()
+        self.size()
         self.setCursor(Qt.OpenHandCursor)
         self.always_visible = always_visible
-        self.init_ui(image_path)
+        self.init_ui(image_path,canvas_size)
 
-    def init_ui(self, image):
-        self.setFixedSize(120, 120)  # Adjust the size as needed
+    def init_ui(self, image,canvas_size):
+        if self.always_visible: # if it's the draggable object from sidebar
+            self.setFixedSize(120, 120)
+        else: # object created at the canvas, must be scalled with canvas dimensions
+            # Calculate the scaling factor
+            scale_width = canvas_size.width() / LocationEditorConstants.CANVAS_WIDTH
+            scale_height = canvas_size.height() / LocationEditorConstants.CANVAS_HEIGHT
+
+            # Use the minimum scaling factor to maintain aspect ratio
+            scale_factor = min(scale_width, scale_height)
+
+            # Calculate new widget size
+            new_widget_width = int(120 * scale_factor)
+            new_widget_height = int(120 * scale_factor)
+
+            self.setFixedSize(new_widget_width, new_widget_height)
+
         self.setIcon(QIcon(image))
         self.setIconSize(self.size())
-        self.setStyleSheet("border: none;")  # Remove the border
+        self.setStyleSheet("border: none;")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.setCursor(Qt.ClosedHandCursor)
-            if self.parent():
-                self.parent().start_drag(self)
         super().mousePressEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.setCursor(Qt.OpenHandCursor)
-        if self.parent():
-            self.parent().end_drag()
         super().mouseReleaseEvent(event)
-
 
     def mouseMoveEvent(self, event):
         if event.buttons() != Qt.LeftButton:

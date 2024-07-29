@@ -39,3 +39,7 @@ class DataBase:
 class InputType:
     TEXT = "text"
     PASSWORD = "pass"
+
+class LocationEditorConstants:
+    CANVAS_WIDTH = 800
+    CANVAS_HEIGHT = 600
