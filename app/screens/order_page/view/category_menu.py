@@ -1,13 +1,15 @@
 #Layout categoriile mari de produse
 
-from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QScrollArea, QAbstractScrollArea, QSizePolicy
 from functools import partial
+from PySide6.QtCore import Qt, QSize
 
 from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
 from app.screens.order_page.model.db_loader import OrderDB
 from app.state.state_manager import StateManager
+import copy
 
 class CategoryMenuView(QWidget):
     def __init__(self, main_window, order_db: OrderDB=None):
@@ -37,28 +39,83 @@ class CategoryMenuView(QWidget):
 
         return main_layout
 
-    def create_scroll_area_widget(self) -> CustomScrollArea:
+    def create_scroll_area_widget(self) -> QScrollArea:
+
+        scroll_area = CustomScrollArea(self)
+
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+
+
         # Categories
-        button_background_widget = QWidget()
-        self.categories_layout = QHBoxLayout(button_background_widget)
+        self.button_background_widget = QWidget()
+        self.categories_layout = QHBoxLayout(self.button_background_widget)
+
+
 
         for category in self.categories:
             try:
                 category_button = PrimaryButton(category.name)
                 #category_button.clicked.connect(focus_button)
                 category_button.clicked.connect(partial(StateManager.instance().change_category, category.id))
+                category_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
                 self.categories_layout.addWidget(category_button)
             except Exception as e:
                 print(f"Categoria {category.name} nu s-a putut initializa ({e})")
 
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.categories_layout.addWidget(PrimaryButton("TEST"))
+        self.button_background_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.categories_layout.addStretch(1)
 
+
+
+
+        #scroll_area.widget().resize(self.button_background_widget.sizeHint())
+        #scroll_area.setMinimumWidth(self.button_background_widget.width())
+
+
         # Creează un QScrollArea și setează scroll_content ca widget conținut
-        scroll_area = CustomScrollArea()
-        scroll_area.setMinimumHeight(120)
-        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
-        scroll_area.setWidget(button_background_widget)
+        horizontal_scrollbar = scroll_area.horizontalScrollBar()
+        #scroll_area.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContentsOnFirstShow)
+
+        scroll_area.setWidget(self.button_background_widget)
+
+        scroll_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        #scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        #scroll_area.setWidgetResizable(True)
+        #scroll_area.resize(QSize(self.button_background_widget.width(), 200))
+
+        #horizontal_scrollbar.setMaximum(1200)
+
+
+
+        dd = scroll_area.viewportSizeHint()
+        ee = scroll_area.sizeHint()
+        e = scroll_area.size()
+
+        sizee = self.button_background_widget.width()
+        aa = scroll_area.width()
+
+
+        a = horizontal_scrollbar.maximum()
+        b = horizontal_scrollbar.minimum()
+        c = horizontal_scrollbar.value()
+        f = horizontal_scrollbar.size()
+        g = horizontal_scrollbar.sizeHint()
+        h = horizontal_scrollbar.sizeIncrement()
+
+        f = scroll_area.maximumViewportSize()
+
+
 
         return scroll_area
 

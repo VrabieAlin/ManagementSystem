@@ -1,4 +1,5 @@
 from PySide6.QtCore import Qt, QPoint, QPointF, QSizeF, QRectF
+from PySide6.QtCore import Qt, QPoint, QPointF, QSize
 from PySide6.QtGui import QPainter, QPen, QColor
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QGraphicsLineItem
 

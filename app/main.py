@@ -68,6 +68,9 @@ class MyApp(QMainWindow):
         # Set fullscreen mode
         self.showFullScreen()
 
+        #Update page
+        self.order_screen.refresh_graphic()
+
 
     def set_screen(self, screen_name):
         if screen_name in self.screens:
