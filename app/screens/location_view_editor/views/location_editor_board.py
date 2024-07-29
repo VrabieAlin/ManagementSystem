@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QPoint, QPointF
+from PySide6.QtCore import Qt, QPoint, QPointF, QSize
 from PySide6.QtGui import QPainter, QPen, QColor
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QGraphicsLineItem
 
@@ -81,6 +81,7 @@ class LocationEditorBoard(QGraphicsView):
             new_pos = snap_pos - QPointF(hot_x, hot_y)
 
             new_object = DraggableObject("static/location_navbar_icon_without_bg.png", always_visible=False)
+            #new_object.setFixedSize(QSize(int(new_object.width() * 1.5), int(new_object.height() * 1.2)))
             proxy_widget = self.scene().addWidget(new_object)
             proxy_widget.setPos(new_pos)
 
