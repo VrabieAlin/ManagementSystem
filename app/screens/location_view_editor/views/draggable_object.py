@@ -1,6 +1,6 @@
 from PySide6.QtCore import QMimeData, QByteArray, QSize
 from PySide6.QtGui import Qt, QDrag, QPixmap, QPainter, QIcon
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy
+from PySide6.QtWidgets import QPushButton, QSizePolicy
 
 from app.utils.constants import LocationEditorConstants
 
@@ -9,30 +9,31 @@ class DraggableObject(QPushButton):
     def __init__(self, image_path, always_visible=False,
                  canvas_size=QSize(LocationEditorConstants.CANVAS_WIDTH,LocationEditorConstants.CANVAS_HEIGHT)):
         super().__init__()
-        self.size()
+        self.width = None
+        self.height = None
         self.setCursor(Qt.OpenHandCursor)
         self.always_visible = always_visible
-        self.init_ui(image_path,canvas_size)
+        self.init_ui_draggable_object(image_path, canvas_size)
 
-    def init_ui(self, image,canvas_size):
-        if self.always_visible: # if it's the draggable object from sidebar
-            self.setFixedSize(120, 120)
-        else: # object created at the canvas, must be scalled with canvas dimensions
-            # Calculate the scaling factor
-            scale_width = canvas_size.width() / LocationEditorConstants.CANVAS_WIDTH
-            scale_height = canvas_size.height() / LocationEditorConstants.CANVAS_HEIGHT
+    def calculate_dimensions(self,canvas_size):
+        # Calculate the scaling factor
+        scale_width = canvas_size.width() / LocationEditorConstants.CANVAS_WIDTH
+        scale_height = canvas_size.height() / LocationEditorConstants.CANVAS_HEIGHT
 
-            # Use the minimum scaling factor to maintain aspect ratio
-            scale_factor = min(scale_width, scale_height)
+        # Use the minimum scaling factor to maintain aspect ratio
+        scale_factor = min(scale_width, scale_height)
 
-            # Calculate new widget size
-            new_widget_width = int(120 * scale_factor)
-            new_widget_height = int(120 * scale_factor)
+        # Calculate new widget size
+        new_widget_width = int(120 * scale_factor)
+        new_widget_height = int(120 * scale_factor)
 
-            self.setFixedSize(new_widget_width, new_widget_height)
+        return new_widget_width, new_widget_height
 
+    def init_ui_draggable_object(self, image, canvas_size):
+        self.width, self.height = self.calculate_dimensions(canvas_size)
+        self.setFixedSize(self.width, self.height)
         self.setIcon(QIcon(image))
-        self.setIconSize(self.size())
+        self.setIconSize(QSize(self.width,self.height))
         self.setStyleSheet("border: none;")
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -51,7 +52,7 @@ class DraggableObject(QPushButton):
 
         mime_data = QMimeData()
         hot_spot = event.pos()
-        data = f"{self.width()},{self.height()},{hot_spot.x()},{hot_spot.y()}".encode('utf-8')
+        data = f"{self.width},{self.height},{hot_spot.x()},{hot_spot.y()}".encode('utf-8')
         mime_data.setData('application/x-dnditemdata', QByteArray(data))
 
         drag = QDrag(self)

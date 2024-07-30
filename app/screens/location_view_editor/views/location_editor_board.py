@@ -10,6 +10,7 @@ from app.utils.constants import LocationEditorConstants
 class LocationEditorBoard(QGraphicsView):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.board_objects = []
         self.setScene(QGraphicsScene(self))
         self.setAcceptDrops(True)
         self.setRenderHint(QPainter.Antialiasing)
@@ -40,6 +41,7 @@ class LocationEditorBoard(QGraphicsView):
             new_object = DraggableObject("static/location_navbar_icon_without_bg.png", always_visible=False,
                                          canvas_size=self.size())
             proxy_widget = self.scene().addWidget(new_object)
+            self.board_objects.append(new_object)
             proxy_widget.setPos(new_pos)
 
             event.setDropAction(Qt.MoveAction)
