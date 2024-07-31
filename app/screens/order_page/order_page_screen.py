@@ -9,6 +9,8 @@ from app.screens.order_page.view.option_menu import OptionsView
 from app.screens.order_page.model.db_loader import OrderDB
 
 class OrderPage(QWidget):
+
+    #For each table will be an OrderPage instance
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window

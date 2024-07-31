@@ -15,6 +15,7 @@ class Colors:
     LIGHT_ORANGE = "#FFA500"  # Portocaliu Deschis
     DARKER_BLUE = "#357ABD"  # Albastru mai închis (Hover)
     EVEN_DARKER_BLUE = "#2B6BA5"  # Albastru și mai închis (Pressed)
+    MEDIUM_GRAY_2 = "#dbdbdb"
 
 
 class BorderType:
@@ -32,6 +33,7 @@ class Texts:
     NO = "Nu"
     LOGIN_MODAL = "Inserati-va parola: "
     PASSWORD = "Parola"
+    ORDER_PAGE = "Order page"
 
 class DataBase:
     BD_NAME = "local_storage.db"

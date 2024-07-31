@@ -8,14 +8,15 @@ from app.utils.widgets.labels.custom_lable_1 import CustomLabel1
 from app.utils.widgets.menu_modal import MenuModal
 from app.utils.widgets.modal import Modal
 from app.utils.widgets.widgets_utils import WidgetUtils
-from app.state.state_manager import StateManager
+from app.state.user_state import UserState
 
 
 class SidebarView(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
-        self.state_manager = StateManager.instance()
+        self.user_state = UserState.instance()
+
         self.setLayout(self.load_view())
         # self.apply_css()
         self.apply_view_logic()
@@ -27,7 +28,7 @@ class SidebarView(QWidget):
         self.vbox_layout.setSpacing(20)
 
         # Init elements
-        name = self.state_manager.user_name
+        name = self.user_state.context.user_name
         self.name_label = CustomLabel1("" if name is None else name)
         self.login_btn = WidgetUtils.createVExpandableButton(Texts.LOGIN)
         self.logout_btn = WidgetUtils.createVExpandableButton(Texts.LOGOUT)
@@ -47,7 +48,7 @@ class SidebarView(QWidget):
         self.vbox_layout.addWidget(self.exit_btn, alignment=Qt.AlignHCenter)
         self.vbox_layout.addSpacing(10)
 
-        if self.state_manager.user_name is None:
+        if self.user_state.context.user_name is None:
             self.logout_btn.hide()
             self.name_label.hide()
 
@@ -65,11 +66,11 @@ class SidebarView(QWidget):
         self.menu_btn.clicked.connect(self.show_menu_modal)
         self.logout_btn.clicked.connect(self.logout)
         self.login_btn.clicked.connect(self.login)
-        self.state_manager.state_changed.connect(self.update_ui)
+        self.user_state.state_changed.connect(self.update_ui)
 
     def show_menu_modal(self):
         # Complete these with const text class when options will be detailed
-        menu_modal = MenuModal([Texts.LOCATION_EDITOR, "teste1", "teste2", "teste3", "teste4", "teste5", "teste6",
+        menu_modal = MenuModal([Texts.LOCATION_EDITOR, Texts.ORDER_PAGE, "teste2", "teste3", "teste4", "teste5", "teste6",
                                 "teste7", "teste8"])
         menu_modal.menu_button.connect(self.on_modal_menu_selected)
         menu_modal.exec()
@@ -89,9 +90,11 @@ class SidebarView(QWidget):
     def on_modal_menu_selected(self, text):
         if text == Texts.LOCATION_EDITOR:
             self.main_window.set_screen(ScreenNames.LOCATION_VIEW_EDITOR_PAGE)
+        elif text == Texts.ORDER_PAGE:
+            self.main_window.set_screen(ScreenNames.ORDER_PAGE)
 
     def logout(self):
-        self.state_manager.logout()
+        self.user_state.logout()
 
     def login(self):
         input_dialog = InputModal(Texts.LOGIN_MODAL, Texts.PASSWORD, InputType.PASSWORD, Texts.LOGIN)
@@ -99,19 +102,19 @@ class SidebarView(QWidget):
         input_dialog.exec()
 
     def on_password_provided(self):
-        self.state_manager.login("teste")
+        self.user_state.login("teste")
 
     def update_ui(self):
-        if self.state_manager.user_name is not None:
-            self.name_label.setText(self.state_manager.user_name)
+        if self.user_state.context.user_name is not None:
+            self.name_label.setText(self.user_state.context.user_name)
             self.logout_btn.show()
             self.name_label.show()
         else:
             self.logout_btn.hide()
             self.name_label.hide()
-        # if self.state_manager.user_name is not None:
+        # if self.user_state.context.user_name is not None:
         #     self.vbox_layout.insertWidget(2, self.logout_btn)
-        #     self.name_label.setText(self.state_manager.user_name)
+        #     self.name_label.setText(self.user_state.context.user_name)
         #     self.vbox_layout.insertWidget(0, self.name_label)
         # else:
         #     self.vbox_layout.removeWidget(self.logout_btn)

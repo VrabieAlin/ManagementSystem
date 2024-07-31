@@ -6,6 +6,7 @@ import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
 from app.db.db_manager import DBManager
 from app.db.for_testing.db_populator import DBInserter
+from app.utils.constants import Colors
 
 from PySide6.QtGui import QPalette, QColor
 
@@ -36,7 +37,7 @@ class MyApp(QMainWindow):
 
         #Set background collor
         p = self.palette()
-        p.setColor(QPalette.Window, QColor("#DDDDDD"))
+        p.setColor(QPalette.Window, QColor(Colors.MEDIUM_GRAY))
 
         # Apply the palette to the main window
         self.setPalette(p)
@@ -66,7 +67,7 @@ class MyApp(QMainWindow):
         self.set_screen(ScreenNames.HOME_PAGE)
 
         # Set fullscreen mode
-        self.showFullScreen()
+        self.show()
 
         #Update page
         self.order_screen.refresh_graphic()
@@ -75,6 +76,8 @@ class MyApp(QMainWindow):
     def set_screen(self, screen_name):
         if screen_name in self.screens:
             self.screen_manager.setCurrentIndex(self.screens[screen_name])
+            # Update page
+            self.order_screen.refresh_graphic()
         else:
             print(f"Screen {screen_name} does not exist")
 
