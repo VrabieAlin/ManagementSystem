@@ -1,11 +1,12 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import QWidget, QGridLayout, QHBoxLayout, QVBoxLayout, QFrame, QScrollArea
 
 from app.db.location_room_objects import LocationRoomObject
 from app.screens.home_page.view.navbar_view import NavbarView
 from app.screens.location_view_editor.views.draggable_object import DraggableObject
+from app.screens.location_view_editor.views.draggable_buttons import DraggableButtons
 from app.screens.location_view_editor.views.location_editor_board import LocationEditorBoard
-
+from app.utils.constants import LocationEditorConstants
 
 class LocationViewEditorScreen(QWidget):
     def __init__(self, main_window):
@@ -13,6 +14,8 @@ class LocationViewEditorScreen(QWidget):
         self.main_window = main_window
         self.db_location_room_object = LocationRoomObject(self.main_window.db_manager)
         self.setLayout(self.load_view())
+
+
 
     def load_view(self):
         grid_layout = QGridLayout()
@@ -27,7 +30,8 @@ class LocationViewEditorScreen(QWidget):
 
         objects = self.get_objects_from_db()
         for _ in objects:
-            button = DraggableObject("static/location_navbar_icon_without_bg.png", True)
+            button = DraggableButtons("static/location_navbar_icon_without_bg.png", True)
+            #button.setStyleSheet("background-color: green;")
             button_widget = QWidget()
             button_layout = QHBoxLayout()
             button_layout.addWidget(button, alignment=Qt.AlignCenter)
@@ -43,10 +47,10 @@ class LocationViewEditorScreen(QWidget):
         scroll_area.setWidget(button_background_widget)
 
         navbar = NavbarView(self.main_window)
-        editor_view = LocationEditorBoard()
+        self.editor_view = LocationEditorBoard()
 
         grid_layout.addWidget(navbar, 0, 0, 1, 2)
-        grid_layout.addWidget(editor_view, 1, 0)
+        grid_layout.addWidget(self.editor_view, 1, 0)
         grid_layout.addWidget(scroll_area, 1, 1)
 
         grid_layout.setColumnStretch(0, 5)
@@ -61,7 +65,6 @@ class LocationViewEditorScreen(QWidget):
         return grid_layout
 
     def resizeEvent(self, event):
-        # on app resize manually, resize the object from the board
         super().resizeEvent(event)
 
     def get_objects_from_db(self):
