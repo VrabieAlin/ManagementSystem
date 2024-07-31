@@ -8,7 +8,7 @@ from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
 from app.screens.order_page.model.db_loader import OrderDB
-from app.state.state_manager import StateManager
+from app.state.order_page_state import OrderPageState
 import copy
 
 class CategoryMenuView(QWidget):
@@ -16,7 +16,7 @@ class CategoryMenuView(QWidget):
         super().__init__()
         self.main_window = main_window
         self.order_db = order_db
-        self.state_manager = StateManager.instance()
+        self.order_page_state: OrderPageState = OrderPageState.instance()
 
         self.categories = self.order_db.load_categories()
         self.load_view()
@@ -57,65 +57,19 @@ class CategoryMenuView(QWidget):
             try:
                 category_button = PrimaryButton(category.name)
                 #category_button.clicked.connect(focus_button)
-                category_button.clicked.connect(partial(StateManager.instance().change_category, category.id))
+                category_button.clicked.connect(partial(self.order_page_state.change_category, category.id))
                 category_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
                 self.categories_layout.addWidget(category_button)
             except Exception as e:
                 print(f"Categoria {category.name} nu s-a putut initializa ({e})")
 
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
-        self.categories_layout.addWidget(PrimaryButton("TEST"))
         self.button_background_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.categories_layout.addStretch(1)
 
-
-
-
-        #scroll_area.widget().resize(self.button_background_widget.sizeHint())
-        #scroll_area.setMinimumWidth(self.button_background_widget.width())
-
-
-        # Creează un QScrollArea și setează scroll_content ca widget conținut
-        horizontal_scrollbar = scroll_area.horizontalScrollBar()
-        #scroll_area.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContentsOnFirstShow)
-
         scroll_area.setWidget(self.button_background_widget)
 
         scroll_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        #scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-
-        #scroll_area.setWidgetResizable(True)
-        #scroll_area.resize(QSize(self.button_background_widget.width(), 200))
-
-        #horizontal_scrollbar.setMaximum(1200)
-
-
-
-        dd = scroll_area.viewportSizeHint()
-        ee = scroll_area.sizeHint()
-        e = scroll_area.size()
-
-        sizee = self.button_background_widget.width()
-        aa = scroll_area.width()
-
-
-        a = horizontal_scrollbar.maximum()
-        b = horizontal_scrollbar.minimum()
-        c = horizontal_scrollbar.value()
-        f = horizontal_scrollbar.size()
-        g = horizontal_scrollbar.sizeHint()
-        h = horizontal_scrollbar.sizeIncrement()
-
-        f = scroll_area.maximumViewportSize()
-
-
 
         return scroll_area
 

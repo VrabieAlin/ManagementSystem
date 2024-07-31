@@ -1,5 +1,8 @@
 
-from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+
 from functools import partial
 
 from app.utils.widgets.buttons.main_button import PrimaryButton
@@ -7,7 +10,7 @@ from app.utils.widgets.custom_scroll_area import CustomScrollArea
 from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
 from app.screens.order_page.model.db_loader import OrderDB
 from app.utils.constants import Colors
-from app.state.state_manager import StateManager
+from app.state.order_page_state import OrderPageState
 
 
 
@@ -19,12 +22,12 @@ class ProductsMenuView(QWidget):
         super().__init__()
         self.main_window = main_window
         self.order_db: OrderDB = order_db
-        self.state_manager: StateManager = StateManager.instance()
+        self.order_state: OrderPageState = OrderPageState.instance()
 
         self.load_logic()
         self.load_view()
 
-        self.state_manager.state_changed.connect(self.on_change_category)
+        self.order_state.category_change.connect(self.on_change_category)
 
     def on_change_category(self):
         self.load_logic()
@@ -36,7 +39,7 @@ class ProductsMenuView(QWidget):
         self.products = self.order_db.get_products()
         self.products_pages = []
 
-        self.current_category_id = self.state_manager.order_page_state['current_category']
+        self.current_category_id = self.order_state.context.order_page_state.current_category
         self.current_products_list = self.products[self.current_category_id]
 
         self.current_products_page = 0 #The product page, on each page contains { max_cols x max_rows } products
@@ -170,9 +173,9 @@ class ProductsMenuView(QWidget):
         #     self.main_layout.setColumnStretch(0, 1)
         #     self.main_layout.setColumnStretch(1, 1)
 
-
     def refresh_products_area(self):
-        print(f"Noua categorie de unde trebuie sa incarc produsele este categoria {self.state_manager.order_page_state['current_category']}")
+        print(f"Noua categorie de unde trebuie sa incarc produsele este categoria "
+              f"{self.order_state.context.order_page_state.current_category}")
 
         self.clear_grid(self.products_area)
 
@@ -180,8 +183,27 @@ class ProductsMenuView(QWidget):
         current_col = 0
 
         for product in self.products_pages[self.current_products_page]:
-            product_button = QPushButton(product['name'])
+
+            product_button = QPushButton()
+            button_inside_layout = QVBoxLayout()
+
+            button_lable = QLabel(product['name'])
+            button_lable.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            font = QFont("Arial", 24, QFont.Weight.Bold)
+            button_lable.setFont(font)
+
+            button_lable.setWordWrap(True)
+            button_lable.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+            button_inside_layout.addWidget(button_lable)
+
             product_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+            product_button.setLayout(button_inside_layout)
+
+
+            product_button.clicked.connect(partial(self.order_state.update_check,
+                                                     (self.order_state.context.order_page_state.table_id, product)))# TO DO ADD SEMNAL SPRE CHECK SA ADD PRODUCT
+
             self.products_area.addWidget(product_button, current_row, current_col)
             current_col += 1
             if current_col > self.max_cols:
@@ -198,38 +220,4 @@ class ProductsMenuView(QWidget):
             if widget is not None:
                 widget.deleteLater()
 
-    def scroll_direction(self, direction="right"):
-        if self.categories_layout.count() > 0:
-            # Obține bara de derulare verticală
-            scrollbar = self.scroll_area.horizontalScrollBar()
-
-            #Obtin valoarea cu care vreau sa fac scroll (dimensiunea butonului unei categorii)
-            scroll_value = self.categories_layout.itemAt(0).widget().width()
-
-            if direction == "right":
-                # Calculează noua valoare a scroll-ului
-                new_value = scrollbar.value() + scroll_value
-                if new_value > scrollbar.maximum():
-                    scrollbar.setValue(scrollbar.maximum())
-                    self.right_arrow.set_availability(available=False)
-                    self.right_arrow.setDown(True)
-                    self.left_arrow.set_availability(available=True)
-                    self.left_arrow.setDown(False)
-                else:
-                    scrollbar.setValue(new_value)
-                    self.left_arrow.set_availability(available=True)
-                    self.left_arrow.setDown(False)
-            else:
-                # Calculează noua valoare a scroll-ului
-                new_value = scrollbar.value() - scroll_value
-                if new_value < scrollbar.minimum():
-                    scrollbar.setValue(scrollbar.minimum())
-                    self.left_arrow.set_availability(available=False)
-                    self.left_arrow.setDown(True)
-                    self.right_arrow.set_availability(available=True)
-                    self.right_arrow.setDown(False)
-                else:
-                    scrollbar.setValue(new_value)
-                    self.right_arrow.set_availability(available=True)
-                    self.right_arrow.setDown(False)
 

@@ -4,6 +4,8 @@ import os
 from PySide6.QtCore import Signal, QObject
 
 from app.utils.decorators.singletone import Singleton
+from app.state.order_page_state import OrderPageState
+from app.state.user_state import UserState
 from app.utils.decorators.state_decorators import save_after
 
 
@@ -12,20 +14,16 @@ class StateManager(QObject):
     state_changed = Signal()  # for reactivity of the app
     def __init__(self):
         super().__init__()
-        self.file_path = "state.json"
-        self.logged_in = False
-        self.user_name = None
-        self.order_page_state = {'current_category': 1}
+        self.file_path = "state.json" #key: table_id, value: [{product_id, total_price, item_price, quantity, state: ORDERED/IN_KITCHEN/EDITOR, name, waiter_id}]
 
         self.load_state()
 
+
     def load_state(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, "r") as file:
-                data = json.load(file)
-                self.logged_in = data.get("logged_in", False)
-                self.user_name = data.get("user_name", None)
-                self.order_page_state = data.get("order_page_state", {'current_category': 1})
+        pass
+
+    def reset_state(self): #In caz de update in state trebuie start fisierul de save state si refacut cu noul format
+        pass
 
     @save_after()
     def login(self, user_name):
@@ -37,6 +35,4 @@ class StateManager(QObject):
         self.logged_in = False
         self.user_name = None
 
-    @save_after()
-    def change_category(self, new_category_id):
-        self.order_page_state['current_category'] = new_category_id
+
