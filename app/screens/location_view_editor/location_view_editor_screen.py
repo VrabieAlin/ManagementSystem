@@ -10,6 +10,8 @@ from app.screens.location_view_editor.views.location_editor_board import Locatio
 class LocationViewEditorScreen(QWidget):
     def __init__(self, main_window):
         super().__init__()
+        self.editor_view = None
+        self.sidebar_objects = []
         self.main_window = main_window
         self.db_location_room_object = LocationRoomObject(self.main_window.db_manager)
         self.setLayout(self.load_view())
@@ -20,6 +22,8 @@ class LocationViewEditorScreen(QWidget):
         grid_layout.setHorizontalSpacing(0)
         grid_layout.setVerticalSpacing(0)
 
+        self.editor_view = LocationEditorBoard()
+
         button_background_widget = QWidget()
         vbox_layout = QVBoxLayout(button_background_widget)
         vbox_layout.setContentsMargins(0, 0, 0, 0)
@@ -27,12 +31,14 @@ class LocationViewEditorScreen(QWidget):
 
         objects = self.get_objects_from_db()
         for _ in objects:
-            button = DraggableObject("static/location_navbar_icon_without_bg.png", True)
+            button = DraggableObject("static/location_navbar_icon_without_bg.png", True,
+                                     canvas_size=self.editor_view.size())
             button_widget = QWidget()
             button_layout = QHBoxLayout()
             button_layout.addWidget(button, alignment=Qt.AlignCenter)
             button_widget.setLayout(button_layout)
             vbox_layout.addWidget(button_widget)
+            self.sidebar_objects.append(button)
 
         vbox_layout.addStretch(1)
 
@@ -43,10 +49,9 @@ class LocationViewEditorScreen(QWidget):
         scroll_area.setWidget(button_background_widget)
 
         navbar = NavbarView(self.main_window)
-        editor_view = LocationEditorBoard()
 
         grid_layout.addWidget(navbar, 0, 0, 1, 2)
-        grid_layout.addWidget(editor_view, 1, 0)
+        grid_layout.addWidget(self.editor_view, 1, 0)
         grid_layout.addWidget(scroll_area, 1, 1)
 
         grid_layout.setColumnStretch(0, 5)
@@ -61,7 +66,10 @@ class LocationViewEditorScreen(QWidget):
         return grid_layout
 
     def resizeEvent(self, event):
-        # on app resize manually, resize the object from the board
+        for sidebar_object in self.sidebar_objects:
+            sidebar_object.init_ui_draggable_object("static/location_navbar_icon_without_bg.png",self.editor_view.size())
+        for board_objects in self.editor_view.board_objects:
+            board_objects.init_ui_draggable_object("static/location_navbar_icon_without_bg.png",self.editor_view.size())
         super().resizeEvent(event)
 
     def get_objects_from_db(self):
