@@ -34,6 +34,7 @@ class Texts:
     LOGIN_MODAL = "Inserati-va parola: "
     PASSWORD = "Parola"
     ORDER_PAGE = "Order page"
+    SAVE = "Salveaza"
 
 class DataBase:
     BD_NAME = "local_storage.db"
@@ -43,5 +44,5 @@ class InputType:
     PASSWORD = "pass"
 
 class LocationEditorConstants:
-    CANVAS_WIDTH = 800
-    CANVAS_HEIGHT = 600
+    CANVAS_WIDTH = 1200
+    CANVAS_HEIGHT = 800

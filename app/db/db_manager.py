@@ -66,11 +66,9 @@ class DBManager():
                         `id` integer not null primary key autoincrement,
                         `name` TEXT not null,
                         `category` TEXT not null,
+                        `image` TEXT not null,
                          unique (`id`)
                     )
-                """)
-        self.cursor.execute("""
-                    insert or ignore into `location_editor_objects` (`category`, `id`, `name`) values ('Utilitare', '1', 'Masa')
                 """)
 
         self.conn.commit()

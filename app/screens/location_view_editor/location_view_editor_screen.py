@@ -3,7 +3,9 @@ from PySide6.QtWidgets import QWidget, QGridLayout, QHBoxLayout, QVBoxLayout, QF
 
 from app.db.location_room_objects import LocationRoomObject
 from app.screens.home_page.view.navbar_view import NavbarView
-from app.screens.location_view_editor.views.draggable_object import DraggableObject
+from app.screens.location_view_editor.utils.dragged_object_info import DraggedObjectInfo
+from app.screens.location_view_editor.views.sidebar_editor_objects import SidebarEditorObjects
+from app.utils.widgets.buttons.draggable_object import DraggableObject
 from app.screens.location_view_editor.views.location_editor_board import LocationEditorBoard
 
 
@@ -11,9 +13,8 @@ class LocationViewEditorScreen(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.editor_view = None
-        self.sidebar_objects = []
         self.main_window = main_window
-        self.db_location_room_object = LocationRoomObject(self.main_window.db_manager)
+        self.dragged_object_info = DraggedObjectInfo()
         self.setLayout(self.load_view())
 
     def load_view(self):
@@ -22,37 +23,14 @@ class LocationViewEditorScreen(QWidget):
         grid_layout.setHorizontalSpacing(0)
         grid_layout.setVerticalSpacing(0)
 
-        self.editor_view = LocationEditorBoard()
-
-        button_background_widget = QWidget()
-        vbox_layout = QVBoxLayout(button_background_widget)
-        vbox_layout.setContentsMargins(0, 0, 0, 0)
-        vbox_layout.setSpacing(20)
-
-        objects = self.get_objects_from_db()
-        for _ in objects:
-            button = DraggableObject("static/location_navbar_icon_without_bg.png", True,
-                                     canvas_size=self.editor_view.size())
-            button_widget = QWidget()
-            button_layout = QHBoxLayout()
-            button_layout.addWidget(button, alignment=Qt.AlignCenter)
-            button_widget.setLayout(button_layout)
-            vbox_layout.addWidget(button_widget)
-            self.sidebar_objects.append(button)
-
-        vbox_layout.addStretch(1)
-
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setFixedWidth(200)
-        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
-        scroll_area.setWidget(button_background_widget)
+        editor_view = LocationEditorBoard(dragged_object_info=self.dragged_object_info)
+        sidebar_editor_objects = SidebarEditorObjects(self.main_window,dragged_object_info=self.dragged_object_info)
 
         navbar = NavbarView(self.main_window)
 
         grid_layout.addWidget(navbar, 0, 0, 1, 2)
-        grid_layout.addWidget(self.editor_view, 1, 0)
-        grid_layout.addWidget(scroll_area, 1, 1)
+        grid_layout.addWidget(editor_view, 1, 0, alignment=Qt.AlignCenter)  # Center the editor view
+        grid_layout.addWidget(sidebar_editor_objects, 1, 1)
 
         grid_layout.setColumnStretch(0, 5)
         grid_layout.setColumnStretch(1, 1)
@@ -66,11 +44,4 @@ class LocationViewEditorScreen(QWidget):
         return grid_layout
 
     def resizeEvent(self, event):
-        for sidebar_object in self.sidebar_objects:
-            sidebar_object.init_ui_draggable_object("static/location_navbar_icon_without_bg.png",self.editor_view.size())
-        for board_objects in self.editor_view.board_objects:
-            board_objects.init_ui_draggable_object("static/location_navbar_icon_without_bg.png",self.editor_view.size())
         super().resizeEvent(event)
-
-    def get_objects_from_db(self):
-        return self.db_location_room_object.load_default_objects()

@@ -62,6 +62,8 @@ class DBInserter:
         "INSERT INTO products (name, category_id, price) VALUES ('Fanta 41', 3, 40.0)",
         "INSERT INTO products (name, category_id, price) VALUES ('Fanta 42', 3, 40.0)",
         "INSERT INTO products (name, category_id, price) VALUES ('Fanta 43', 3, 40.0)",
+        "insert into `location_editor_objects` (`category`, `id`, `image`, `name`) select 'Mese' as `category`, '1' as `id`, 'big_round_table.png' as `image`, 'Masa rotunda mare' as `name` union all select 'Mese' as `category`, '2' as `id`, 'big_rectangular_table.png' as `image`, 'Masa patrata mare' as `name`"
+
     ]
     def __init__(self, db_manager: DBManager):
         self.db_manager = db_manager
