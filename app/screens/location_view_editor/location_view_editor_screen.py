@@ -19,7 +19,7 @@ class LocationViewEditorScreen(QWidget):
         grid_layout.setHorizontalSpacing(0)
         grid_layout.setVerticalSpacing(0)
 
-        editor_view = LocationEditorBoard()
+        editor_view = LocationEditorBoard(self.main_window)
         sidebar_editor_objects = SidebarEditorObjects(self.main_window,editor_view)
 
         navbar = NavbarView(self.main_window)

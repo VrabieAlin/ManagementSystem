@@ -12,8 +12,6 @@ from app.state.location_editor_drag_state import LocationEditorDragState
 class DraggableObject(QPushButton):
     def __init__(self, image_path, id=None, always_visible=False):
         super().__init__()
-        self.size()
-        self.setCursor(Qt.OpenHandCursor)
         self.always_visible = always_visible
         self.image = image_path
         self.location_editor_drag_state : LocationEditorDragState = LocationEditorDragState.instance()
@@ -21,6 +19,7 @@ class DraggableObject(QPushButton):
         self.init_ui()
 
     def init_ui(self):
+        self.setCursor(Qt.OpenHandCursor)
         self.setFixedSize(120, 120)
         self.setIcon(QIcon(self.image))
         self.setIconSize(self.size())

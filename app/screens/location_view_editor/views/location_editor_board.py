@@ -4,13 +4,14 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 
+from app.db.room_objects import RoomObjects
 from app.state.location_editor_drag_state import LocationEditorDragState
 from app.utils.constants import LocationEditorConstants
 from app.utils.widgets.buttons.draggable_object import DraggableObject
 
 
 class LocationEditorBoard(QGraphicsView):
-    def __init__(self, parent=None):
+    def __init__(self, main_window,parent=None):
         super().__init__(parent)
         self.setScene(QGraphicsScene(self))
         self.setAcceptDrops(True)
@@ -21,7 +22,9 @@ class LocationEditorBoard(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.location_editor_drag_state: LocationEditorDragState = LocationEditorDragState.instance()
-        self.editor_placed_objects = []
+        self.db_room_objects = RoomObjects(main_window.db_manager)
+        self.editor_placed_objects = self.db_room_objects.get_objects_for_room(1)
+        self.load_object_on_board()
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('application/x-dnditemdata'):
@@ -58,10 +61,16 @@ class LocationEditorBoard(QGraphicsView):
         else:
             event.ignore()
 
+    def load_object_on_board(self):
+        print(len(self.editor_placed_objects))
+        for o in self.editor_placed_objects:
+            new_object = DraggableObject(o.image, id=o.id, always_visible=False)
+            proxy_widget = self.scene().addWidget(new_object)
+            proxy_widget.setPos(o.x,o.y)
+
     def add_object(self, item):
         for index, o in enumerate(self.editor_placed_objects):
             if o.id == item.id:
                 self.editor_placed_objects[index] = item
                 return
         self.editor_placed_objects.append(item)
-

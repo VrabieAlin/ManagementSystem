@@ -7,7 +7,7 @@ from app.utils.utils import dict_factory
 
 class DBManager():
     def __init__(self):
-        self.delete_db() # ASV: WARNING: ONLY FOR TESTS
+        # self.delete_db() # ASV: WARNING: ONLY FOR TESTS
         self.init_db()
 
     def init_db(self):
@@ -47,15 +47,15 @@ class DBManager():
         # Creare tabel objects
         self.cursor.execute("""
                     CREATE TABLE IF NOT EXISTS room_objects (
-                        `id` integer not null primary key autoincrement,
-                        owner_room_id INTEGER,
+                        `id` string not null primary key,
+                        room_id INTEGER,
                         x INTEGER,
                         y INTEGER,
                         size_x INTEGER,
                         size_y INTEGER,
                         rotation REAL,
                         image TEXT,
-                        FOREIGN KEY (owner_room_id) REFERENCES rooms (id)
+                        FOREIGN KEY (room_id) REFERENCES rooms (id)
                     )
                 """)
 
