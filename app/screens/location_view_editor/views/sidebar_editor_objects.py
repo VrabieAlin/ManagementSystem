@@ -1,7 +1,8 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QScrollArea, QFrame, QWidget, QVBoxLayout, QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QScrollArea, QFrame, QWidget, QVBoxLayout, QHBoxLayout
 
-from app.db.location_room_objects import LocationRoomObject
+from app.db.location_editor_objects import LocationEditorObjects
+from app.db.room_objects import RoomObjects
 from app.utils.constants import Texts
 from app.utils.widgets.buttons.draggable_object import DraggableObject
 from app.utils.widgets.buttons.main_button import PrimaryButton
@@ -9,11 +10,12 @@ from app.utils.widgets.buttons.main_button import PrimaryButton
 
 class SidebarEditorObjects(QScrollArea):
 
-    def __init__(self,main_window,dragged_object_info):
+    def __init__(self,main_window,editor_board):
         super().__init__()
         self.main_window = main_window
-        self.dragged_object_info = dragged_object_info
-        self.db_location_room_object = LocationRoomObject(self.main_window.db_manager)
+        self.db_location_room_object = LocationEditorObjects(self.main_window.db_manager)
+        self.db_room_objects = RoomObjects(self.main_window.db_manager)
+        self.editor_board = editor_board
         self.init_ui()
 
     def init_ui(self):
@@ -36,7 +38,7 @@ class SidebarEditorObjects(QScrollArea):
 
         objects = self.get_objects_from_db()
         for o in objects:
-            button = DraggableObject(f"static/location_editor_items/{o.image}", dragged_object_info=self.dragged_object_info, always_visible=True)
+            button = DraggableObject(f"static/location_editor_items/{o.image}", always_visible=True)
             button_widget = QWidget()
             button_layout = QHBoxLayout()
             button_layout.addWidget(button, alignment=Qt.AlignCenter)
@@ -51,6 +53,7 @@ class SidebarEditorObjects(QScrollArea):
 
         # Create and add the new button
         new_button = PrimaryButton(Texts.SAVE)
+        new_button.clicked.connect(self.save_board)
         main_layout.addWidget(new_button, alignment=Qt.AlignBottom)
 
         # Add a bottom margin for the button
@@ -65,3 +68,6 @@ class SidebarEditorObjects(QScrollArea):
 
     def get_objects_from_db(self):
         return self.db_location_room_object.load_default_objects()
+
+    def save_board(self):
+        self.db_room_objects.save_objects_for_room(self.editor_board.editor_placed_objects)

@@ -1,23 +1,27 @@
+from copy import deepcopy
+
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 
-from app.utils.widgets.buttons.draggable_object import DraggableObject
+from app.state.location_editor_drag_state import LocationEditorDragState
 from app.utils.constants import LocationEditorConstants
+from app.utils.widgets.buttons.draggable_object import DraggableObject
 
 
 class LocationEditorBoard(QGraphicsView):
-    def __init__(self, dragged_object_info=None, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setScene(QGraphicsScene(self))
         self.setAcceptDrops(True)
         self.setRenderHint(QPainter.Antialiasing)
         self.scene().setSceneRect(0, 0, LocationEditorConstants.CANVAS_WIDTH, LocationEditorConstants.CANVAS_HEIGHT)
-        self.setFixedSize(LocationEditorConstants.CANVAS_WIDTH,LocationEditorConstants.CANVAS_HEIGHT)
+        self.setFixedSize(LocationEditorConstants.CANVAS_WIDTH, LocationEditorConstants.CANVAS_HEIGHT)
         # Remove scroll bars
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.dragged_object_info = dragged_object_info
+        self.location_editor_drag_state: LocationEditorDragState = LocationEditorDragState.instance()
+        self.editor_placed_objects = []
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('application/x-dnditemdata'):
@@ -41,8 +45,11 @@ class LocationEditorBoard(QGraphicsView):
             drop_pos = self.mapToScene(event.pos())
             new_pos = drop_pos - QPointF(hot_x, hot_y)
 
-            new_object = DraggableObject(self.dragged_object_info.image, dragged_object_info=self.dragged_object_info,
-                                         always_visible=False)
+            dragged_item = deepcopy(self.location_editor_drag_state.context.dragged_item)
+            dragged_item.x = new_pos.x()
+            dragged_item.y = new_pos.y()
+            self.add_object(dragged_item)
+            new_object = DraggableObject(dragged_item.image, id=dragged_item.id, always_visible=False)
             proxy_widget = self.scene().addWidget(new_object)
             proxy_widget.setPos(new_pos)
 
@@ -50,3 +57,11 @@ class LocationEditorBoard(QGraphicsView):
             event.accept()
         else:
             event.ignore()
+
+    def add_object(self, item):
+        for index, o in enumerate(self.editor_placed_objects):
+            if o.id == item.id:
+                self.editor_placed_objects[index] = item
+                return
+        self.editor_placed_objects.append(item)
+

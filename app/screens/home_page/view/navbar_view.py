@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 
 from app.db.location_rooms import LocationRoom
 from app.utils.widgets.buttons.image_button import ImageLabelWidget

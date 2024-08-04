@@ -1,16 +1,23 @@
+import random
+import uuid
+
 from PySide6.QtCore import QMimeData, QByteArray
 from PySide6.QtGui import Qt, QDrag, QPixmap, QPainter, QIcon, QMouseEvent
 from PySide6.QtWidgets import QPushButton, QSizePolicy
+from box import Box
+
+from app.state.location_editor_drag_state import LocationEditorDragState
 
 
 class DraggableObject(QPushButton):
-    def __init__(self, image_path, dragged_object_info=None, always_visible=False):
+    def __init__(self, image_path, id=None, always_visible=False):
         super().__init__()
         self.size()
         self.setCursor(Qt.OpenHandCursor)
         self.always_visible = always_visible
         self.image = image_path
-        self.dragged_object_info = dragged_object_info
+        self.location_editor_drag_state : LocationEditorDragState = LocationEditorDragState.instance()
+        self.id = id
         self.init_ui()
 
     def init_ui(self):
@@ -33,8 +40,14 @@ class DraggableObject(QPushButton):
         if event.buttons() != Qt.LeftButton:
             return
 
-        # Pass custom data for drop event in location_editor_board
-        self.dragged_object_info.image = self.image
+        if self.always_visible is True:
+            self.id= str(uuid.uuid4())
+
+        pass_data = {
+            'image': self.image,
+            'id': self.id
+        }
+        self.location_editor_drag_state.save_dragged_object_info(Box(pass_data))
 
         mime_data = QMimeData()
         hot_spot = event.pos()

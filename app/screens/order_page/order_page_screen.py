@@ -1,12 +1,12 @@
 from PySide6.QtWidgets import QWidget, QGridLayout
-from PySide6.QtCore import Qt
 
-from app.screens.order_page.view.top_bar import TopBarView
-from app.screens.order_page.view.check import CheckView
-from app.screens.order_page.view.category_menu import CategoryMenuView
-from app.screens.order_page.view.products_menu import ProductsMenuView
-from app.screens.order_page.view.option_menu import OptionsView
 from app.screens.order_page.model.db_loader import OrderDB
+from app.screens.order_page.view.category_menu import CategoryMenuView
+from app.screens.order_page.view.check import CheckView
+from app.screens.order_page.view.option_menu import OptionsView
+from app.screens.order_page.view.products_menu import ProductsMenuView
+from app.screens.order_page.view.top_bar import TopBarView
+
 
 class OrderPage(QWidget):
 

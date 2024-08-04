@@ -1,5 +1,5 @@
-import sqlite3
 import os
+import sqlite3
 
 from app.utils.constants import DataBase
 from app.utils.utils import dict_factory
@@ -47,15 +47,14 @@ class DBManager():
         # Creare tabel objects
         self.cursor.execute("""
                     CREATE TABLE IF NOT EXISTS room_objects (
-                        object_id INTEGER PRIMARY KEY,
+                        `id` integer not null primary key autoincrement,
                         owner_room_id INTEGER,
-                        pos_x INTEGER,
-                        pos_y INTEGER,
+                        x INTEGER,
+                        y INTEGER,
                         size_x INTEGER,
                         size_y INTEGER,
                         rotation REAL,
-                        image_id INTEGER,
-                        name TEXT,
+                        image TEXT,
                         FOREIGN KEY (owner_room_id) REFERENCES rooms (id)
                     )
                 """)

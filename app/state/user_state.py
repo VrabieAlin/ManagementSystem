@@ -2,10 +2,10 @@ import json
 import os
 
 from PySide6.QtCore import Signal, QObject
+from box import Box
 
 from app.utils.decorators.singletone import Singleton
 from app.utils.decorators.state_decorators import save_after
-from box import Box
 
 
 @Singleton

@@ -1,11 +1,10 @@
-import sqlite3
 from app.db.db_manager import DBManager
 
 class DBInserter:
 
     inserts = [
-        "INSERT INTO rooms (name) VALUES ('Main Restaurant')",
-        "INSERT INTO rooms (name) VALUES ('The Terrace')",
+        "INSERT INTO rooms (id,name) VALUES (1,'Main Restaurant')",
+        "INSERT INTO rooms (id,name) VALUES (2,'The Terrace')",
 
         "INSERT INTO categories (name) VALUES ('Burgers')",
         "INSERT INTO categories (name) VALUES ('Pizza')",
