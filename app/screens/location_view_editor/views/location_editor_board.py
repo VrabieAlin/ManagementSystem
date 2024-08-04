@@ -62,7 +62,6 @@ class LocationEditorBoard(QGraphicsView):
             event.ignore()
 
     def load_object_on_board(self):
-        print(len(self.editor_placed_objects))
         for o in self.editor_placed_objects:
             new_object = DraggableObject(o.image, id=o.id, always_visible=False)
             proxy_widget = self.scene().addWidget(new_object)

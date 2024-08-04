@@ -15,7 +15,6 @@ class RoomObjects:
     def get_objects_for_room(self, room_id):
         self.db_manager.cursor.execute("SELECT * FROM room_objects WHERE room_id = ?",(room_id,))
         rows = self.db_manager.cursor.fetchall()
-        print(rows)
         return [self._serialize(r) for r in rows]
 
     @staticmethod

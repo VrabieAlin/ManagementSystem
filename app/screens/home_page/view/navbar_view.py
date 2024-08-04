@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 
 from app.db.location_rooms import LocationRoom
+from app.state.navbar_state import NavbarState
 from app.utils.widgets.buttons.image_button import ImageLabelWidget
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
 
@@ -11,8 +12,10 @@ class NavbarView(QWidget):
         super(NavbarView, self).__init__()
         self.main_window = main_window
         self.db_location_room = LocationRoom(self.main_window.db_manager)
-
+        self.buttons = []
+        self.navbar_state: NavbarState = NavbarState.instance()
         self.load_view()
+        self.navbar_state.view_selected.connect(self.set_active_view)
 
     def load_view(self):
         # Creează layout-ul principal pe verticală
@@ -27,10 +30,12 @@ class NavbarView(QWidget):
         hbox_layout.setSpacing(20)
 
         restaurant_rooms = self.get_rooms_from_db()
+        self.navbar_state.change_view(restaurant_rooms[0].name)
         # Creează butoane cu dimensiuni specifice
         for room in restaurant_rooms:
             button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name)
             hbox_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignHCenter)
+            self.buttons.append(button)
 
         # Adaugă spatiere la QHBoxLayout dupa butoane pentru a le muta la stanga
         hbox_layout.addStretch(1)
@@ -49,3 +54,12 @@ class NavbarView(QWidget):
 
     def get_rooms_from_db(self):
         return self.db_location_room.load_rooms()
+
+    def set_active_view(self):
+        view_selected = self.navbar_state.context.active_view
+        print(view_selected)
+        for b in self.buttons:
+            if b.label_text == view_selected:
+                b.apply_active()
+            else:
+                b.apply_inactive()
