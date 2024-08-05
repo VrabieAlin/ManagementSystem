@@ -1,12 +1,12 @@
 #Layout cu nota: contine fiecare item comandat
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout
-from app.utils.constants import Colors
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QSpinBox, QFrame
+    QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSpinBox
 )
-from app.state.state_manager import StateManager
+
 from app.state.order_page_state import OrderPageState
+from app.utils.constants import Colors
+
 
 class ProductWidget(QWidget):
     def __init__(self, product, quantity, update_callback):

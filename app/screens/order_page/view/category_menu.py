@@ -1,15 +1,16 @@
 #Layout categoriile mari de produse
 
-from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QFrame, QHBoxLayout, QScrollArea, QAbstractScrollArea, QSizePolicy
 from functools import partial
-from PySide6.QtCore import Qt, QSize
 
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QGridLayout, QFrame, QHBoxLayout, QScrollArea, QSizePolicy
+
+from app.screens.order_page.model.db_loader import OrderDB
+from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
+from app.state.order_page_state import OrderPageState
 from app.utils.widgets.buttons.main_button import PrimaryButton
 from app.utils.widgets.custom_scroll_area import CustomScrollArea
-from app.screens.order_page.view.elements.Buttons.arrow_button import ArrowButton
-from app.screens.order_page.model.db_loader import OrderDB
-from app.state.order_page_state import OrderPageState
-import copy
+
 
 class CategoryMenuView(QWidget):
     def __init__(self, main_window, order_db: OrderDB=None):

@@ -9,14 +9,18 @@ from app.utils.decorators.state_decorators import save_after
 
 
 @Singleton
-class UserState(QObject):
+class NavbarState(QObject):
     state_changed = Signal()  # for reactivity of the app
+    view_selected = Signal()
+
     def __init__(self):
         super().__init__()
         self.file_path = "state.json"
 
-        self.context = Box({"logged_in": False,
-                            "user_name": None})
+        self.context = Box(
+            {
+                "active_view": "1",
+            })
 
         self.load_state()
 
@@ -24,19 +28,10 @@ class UserState(QObject):
         if os.path.exists(self.file_path):
             with open(self.file_path, "r") as file:
                 data = json.load(file)
-                self.context.logged_in = data.get("logged_in", False)
-                self.context.user_name = data.get("user_name", None)
+                self.context.active_view = data.get("active_view", 'teste')
 
     @save_after()
-    def login(self, user_name):
-        self.context.logged_in = True
-        self.context.user_name = user_name
+    def change_view(self, view):
+        self.context.active_view = view
+        self.view_selected.emit()
         return self.context
-
-    @save_after()
-    def logout(self):
-        self.context.logged_in = False
-        self.context.user_name = None
-        return self.context
-
-

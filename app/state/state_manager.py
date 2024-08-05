@@ -1,11 +1,6 @@
-import json
-import os
-
 from PySide6.QtCore import Signal, QObject
 
 from app.utils.decorators.singletone import Singleton
-from app.state.order_page_state import OrderPageState
-from app.state.user_state import UserState
 from app.utils.decorators.state_decorators import save_after
 
 

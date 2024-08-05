@@ -1,6 +1,7 @@
-import sys
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QScrollArea, QMainWindow
-from PySide6.QtCore import Qt, QPoint, QSize
+from PySide6.QtCore import QPoint, Qt
+from PySide6.QtWidgets import QScrollArea
+from PySide6.QtWidgets import QScrollArea
+
 
 class CustomScrollArea(QScrollArea):
     def __init__(self, parent=None):
