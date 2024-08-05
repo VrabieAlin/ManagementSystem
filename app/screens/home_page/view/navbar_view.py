@@ -30,10 +30,10 @@ class NavbarView(QWidget):
         hbox_layout.setSpacing(20)
 
         restaurant_rooms = self.get_rooms_from_db()
-        self.navbar_state.change_view(restaurant_rooms[0].name)
+        self.navbar_state.change_view(restaurant_rooms[0].id)
         # Creează butoane cu dimensiuni specifice
         for room in restaurant_rooms:
-            button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name)
+            button = ImageLabelWidget("static/location_navbar_icon_without_bg.png", room.name,room.id)
             hbox_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignHCenter)
             self.buttons.append(button)
 
@@ -57,9 +57,8 @@ class NavbarView(QWidget):
 
     def set_active_view(self):
         view_selected = self.navbar_state.context.active_view
-        print(view_selected)
         for b in self.buttons:
-            if b.label_text == view_selected:
+            if b.id == view_selected:
                 b.apply_active()
             else:
                 b.apply_inactive()

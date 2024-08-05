@@ -19,7 +19,7 @@ class NavbarState(QObject):
 
         self.context = Box(
             {
-                "active_view": 'teste',
+                "active_view": "1",
             })
 
         self.load_state()

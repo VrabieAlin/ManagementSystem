@@ -1,3 +1,5 @@
+import uuid
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QLabel, QWidget, QVBoxLayout
@@ -9,10 +11,11 @@ from app.utils.widgets.labels.custom_lable_1 import CustomLabel1
 
 ROW_NUMBER = 2
 class ImageLabelWidget(QWidget):
-    def __init__(self, image_path, label_text, parent=None):
+    def __init__(self, image_path, label_text, id, parent=None):
         super().__init__(parent)
         self.setObjectName("ImageLabelWidget")
         self.image_label = None
+        self.id = id
         self.label_text = label_text
         self.navbar_state : NavbarState = NavbarState.instance()
         self.init_ui(image_path, label_text)
@@ -51,4 +54,4 @@ class ImageLabelWidget(QWidget):
         self.image_label.setStyleSheet(CSSUtils.applyBackgroundColor(""))
 
     def mousePressEvent(self,event):
-        self.navbar_state.change_view(self.label_text)
+        self.navbar_state.change_view(self.id)

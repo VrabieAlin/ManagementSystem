@@ -3,8 +3,8 @@ from app.db.db_manager import DBManager
 class DBInserter:
 
     inserts = [
-        "INSERT OR IGNORE INTO rooms (id,name) VALUES (1,'Main Restaurant')",
-        "INSERT OR IGNORE INTO rooms (id,name) VALUES (2,'The Terrace')",
+        "INSERT OR IGNORE INTO rooms (id,name) VALUES ('7004364b-055d-43c5-b45d-f5729fbd5aa5','Main Restaurant')",
+        "INSERT OR IGNORE INTO rooms (id,name) VALUES ('76974831-5f98-4e4f-abaf-048a856c5719','The Terrace')",
 
         "INSERT OR IGNORE INTO categories (name) VALUES ('Burgers')",
         "INSERT OR IGNORE INTO categories (name) VALUES ('Pizza')",

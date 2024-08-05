@@ -18,7 +18,7 @@ class DBManager():
         # Creare tabel rooms
         self.cursor.execute("""
                     CREATE TABLE IF NOT EXISTS rooms (
-                        id INTEGER PRIMARY KEY,
+                        id TEXT PRIMARY KEY,
                         name TEXT
                     )
                 """)

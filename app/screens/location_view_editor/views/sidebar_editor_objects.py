@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QScrollArea, QFrame, QWidget, QVBoxLayout, QHBoxLa
 
 from app.db.location_editor_objects import LocationEditorObjects
 from app.db.room_objects import RoomObjects
+from app.state.navbar_state import NavbarState
 from app.utils.constants import Texts
 from app.utils.widgets.buttons.draggable_object import DraggableObject
 from app.utils.widgets.buttons.main_button import PrimaryButton
@@ -16,6 +17,7 @@ class SidebarEditorObjects(QScrollArea):
         self.db_location_room_object = LocationEditorObjects(self.main_window.db_manager)
         self.db_room_objects = RoomObjects(self.main_window.db_manager)
         self.editor_board = editor_board
+        self.navbar_state : NavbarState = NavbarState.instance()
         self.init_ui()
 
     def init_ui(self):
@@ -70,4 +72,4 @@ class SidebarEditorObjects(QScrollArea):
         return self.db_location_room_object.load_default_objects()
 
     def save_board(self):
-        self.db_room_objects.save_objects_for_room(self.editor_board.editor_placed_objects)
+        self.db_room_objects.save_objects_for_room(self.editor_board.editor_placed_objects, self.navbar_state.context.active_view)
