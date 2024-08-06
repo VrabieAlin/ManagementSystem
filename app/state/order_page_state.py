@@ -5,31 +5,26 @@ from PySide6.QtCore import Signal, QObject
 
 from app.utils.decorators.singletone import Singleton
 from app.utils.decorators.state_decorators import save_after
+from app.state.base_state import BaseState
 from box import Box
+
+moked_data = {
+    "order_page_state": {
+        "table_id": 1,
+        "current_category": 1
+    },
+    "tables_orders": {}
+}
 
 
 @Singleton
-class OrderPageState(QObject):
+class OrderPageState(BaseState):
     state_changed = Signal()  # for reactivity of the app
     category_change = Signal()
     product_added = Signal(int, dict)
 
     def __init__(self):
-        super().__init__()
-        self.file_path = "state.json"
-
-        self.context = Box({"order_page_state": {'table_id': 1,
-                                                 'current_category': 1},
-                            "tables_orders": {}})
-
-        self.load_state()
-
-    def load_state(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, "r") as file:
-                data = json.load(file)
-                self.context.order_page_state = data.get("order_page_state", {'table_id': 1, 'current_category': 1})
-                self.context.tables_orders = data.get("tables_orders", {})
+        super().__init__(moked_data)
 
     @save_after()
     def change_category(self, new_category_id):

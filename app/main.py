@@ -67,7 +67,7 @@ class MyApp(QMainWindow):
         self.set_screen(ScreenNames.HOME_PAGE)
 
         # Set fullscreen mode
-        self.show()
+        self.showFullScreen()
 
         #Update page
         self.order_screen.refresh_graphic()

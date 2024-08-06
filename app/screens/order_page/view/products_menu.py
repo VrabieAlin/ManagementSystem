@@ -69,7 +69,7 @@ class ProductsMenuView(QWidget):
 
     def create_layout_layout(self):
         main_layout = QGridLayout()
-        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setContentsMargins(0, 0, 10, 0)
         main_layout.setSpacing(5)
 
         return main_layout

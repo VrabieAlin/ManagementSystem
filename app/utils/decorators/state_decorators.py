@@ -27,7 +27,6 @@ def save_state(self, context):
     except json.JSONDecodeError:
         print(f"Fișierul {self.file_path} nu este un JSON valid.")
 
-
     with open(self.file_path, "w") as file:
         for field_name, field_value in context.items():
             data[field_name] = field_value
