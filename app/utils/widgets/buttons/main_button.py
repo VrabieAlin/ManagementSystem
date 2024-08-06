@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton
-from PySide6.QtGui import QColor
-from PySide6.QtCore import Qt
+
 from app.utils.constants import Colors
+
 
 class PrimaryButton(QPushButton):
     def __init__(self, text, parent=None):
