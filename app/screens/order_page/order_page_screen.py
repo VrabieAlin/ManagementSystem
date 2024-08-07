@@ -21,7 +21,8 @@ class OrderPage(QWidget):
 
 
     def refresh_graphic(self):
-        self.category_menu.check_arrow_availability()
+        pass
+        #self.category_menu.check_arrow_availability()
 
     def load_view(self):
         main_layout = QGridLayout()

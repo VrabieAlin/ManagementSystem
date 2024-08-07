@@ -71,7 +71,7 @@ class CheckView(QWidget):
     def create_total_label(self):
         self.total_label = QLabel("Total: 0.00 RON")
         self.total_label.setStyleSheet(
-            "color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px;")
+            "color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px; border-radius: 5; border-top-left-radius: 0; border-top-right-radius: 0")
         self.main_layout.addWidget(self.total_label)
 
     def add_product(self, table_id, product):

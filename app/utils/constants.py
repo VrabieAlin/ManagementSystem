@@ -8,6 +8,8 @@ class Colors:
     WHITE = "#FFFFFF"  # Alb
     LIGHT_GRAY = "#F5F5F5"  # Gri Deschis
     MEDIUM_GRAY = "#CCCCCC"  # Gri Mediu
+    MEDIUM_GRAY_2 = "#dbdbdb"  # Gri Mediu 2
+    MEDIUM_GRAY_3 = "#b9b9b9"  # Gri Mediu 3
     DARK_GRAY = "#333333"  # Gri Închis
     SOFT_BLUE = "#4A90E2"  # Albastru Soft
     LIGHT_GREEN = "#50E3C2"  # Verde Deschis
@@ -15,7 +17,8 @@ class Colors:
     LIGHT_ORANGE = "#FFA500"  # Portocaliu Deschis
     DARKER_BLUE = "#357ABD"  # Albastru mai închis (Hover)
     EVEN_DARKER_BLUE = "#2B6BA5"  # Albastru și mai închis (Pressed)
-    MEDIUM_GRAY_2 = "#dbdbdb"
+    BLACK = "#000000"  # Negru
+
 
 
 class BorderType:
