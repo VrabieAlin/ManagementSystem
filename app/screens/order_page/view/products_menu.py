@@ -6,8 +6,10 @@ from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QLabel, QSizePolicy, QVBoxLayout
 
 from app.screens.order_page.model.db_loader import OrderDB
+from app.screens.order_page.view.elements.widgets.product_card import ProductCardContainer
 from app.state.order_page_state import OrderPageState
 from app.utils.constants import Colors
+from app.screens.order_page.model.product import Product
 
 
 class ProductsMenuView(QWidget):
@@ -48,8 +50,8 @@ class ProductsMenuView(QWidget):
             self.products_pages.append(page)
 
         #Fill last page with default elements to have same size as the others
-        while len(self.products_pages[-1]) < page_size:
-            self.products_pages[-1].append({'id': -1, 'name': ''})
+        # while len(self.products_pages[-1]) < page_size:
+        #     self.products_pages[-1].append(Product(-1, " ", 0, " ", -1, -1, -1))
 
 
     def load_view(self):
@@ -65,7 +67,7 @@ class ProductsMenuView(QWidget):
 
     def create_layout_layout(self):
         main_layout = QGridLayout()
-        main_layout.setContentsMargins(0, 0, 10, 0)
+        main_layout.setContentsMargins(0, 0, 10, 10)
         main_layout.setSpacing(5)
 
         return main_layout
@@ -80,7 +82,7 @@ class ProductsMenuView(QWidget):
     def create_products_area_layout(self): #5 cols x 4 rows
         self.products_area = QGridLayout()
         self.products_area.setContentsMargins(0, 0, 0, 0)
-        self.products_area.setSpacing(5)
+        self.products_area.setSpacing(10)
 
         self.refresh_products_area()
 
@@ -95,33 +97,74 @@ class ProductsMenuView(QWidget):
         self.products_area.setRowStretch(2, 1)
         self.products_area.setRowStretch(3, 1)
 
-        self.setStyleSheet(f"""
-                    QPushButton {{
-                        background-color: {Colors.SOFT_BLUE};
-                        color: {Colors.WHITE};
-                        border: 1px solid {Colors.SOFT_BLUE};
-                        border-radius: 4px;
-                        padding: 10px 20px;
-                        font-size: 20px;
-                        font-weight: bold;
-                    }}
-                    """)
+        # self.setStyleSheet(f"""
+        #             QPushButton {{
+        #                 background-color: {Colors.SOFT_BLUE};
+        #                 color: {Colors.WHITE};
+        #                 border: 1px solid {Colors.SOFT_BLUE};
+        #                 border-radius: 5px;
+        #                 padding: 10px 20px;
+        #                 font-size: 20px;
+        #                 font-weight: bold;
+        #             }}
+        #             """)
 
         return self.products_area
 
     def create_left_arraw_widget(self):
         button = QPushButton("<<")
-        button.clicked.connect(partial(self.move_page, "left"))
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        button.setStyleSheet(f"""
+                                QPushButton {{
+                                    background-color: {Colors.SOFT_BLUE};
+                                    color: {Colors.WHITE};
+                                    border: 1px solid {Colors.SOFT_BLUE};
+                                    border-radius: 5px;
+                                    padding: 10px 20px;
+                                    font-size: 24px;
+                                    font-weight: bold;  
+                                }}
+                            """)
 
-        return button
+        button.clicked.connect(partial(self.move_page, "left"))
+        button.setFixedSize(350, 70)
+        button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+
+        # Create a layout to hold the button and set its alignment to center
+        button_layout = QVBoxLayout()
+        button_layout.addWidget(button, 0, Qt.AlignmentFlag.AlignCenter)
+
+        # Set the layout to the parent widget
+        parent_widget = QWidget()
+        parent_widget.setLayout(button_layout)
+
+        return parent_widget
 
     def create_right_arrow_widget(self):
         button = QPushButton(">>")
+        button.setStyleSheet(f"""
+                                QPushButton {{
+                                    background-color: {Colors.SOFT_BLUE};
+                                    color: {Colors.WHITE};
+                                    border: 1px solid {Colors.SOFT_BLUE};
+                                    border-radius: 5px;
+                                    padding: 10px 20px;
+                                    font-size: 24px;
+                                    font-weight: bold;  
+                                }}
+                            """)
         button.clicked.connect(partial(self.move_page, "right"))
-        button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        button.setFixedSize(350, 70)
+        button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
-        return button
+        # Create a layout to hold the button and set its alignment to center
+        button_layout = QVBoxLayout()
+        button_layout.addWidget(button, 0, Qt.AlignmentFlag.AlignCenter)
+
+        # Set the layout to the parent widget
+        parent_widget = QWidget()
+        parent_widget.setLayout(button_layout)
+
+        return parent_widget
 
     def move_page(self, direction):
         if direction == 'right' and self.current_products_page < len(self.products_pages):
@@ -163,11 +206,6 @@ class ProductsMenuView(QWidget):
             self.main_layout.setColumnStretch(0, 1)
             self.main_layout.setColumnStretch(1, 1)
 
-        # if (left_arrow_on == True and right_arrow_on == False) or (left_arrow_on == False and right_arrow_on == True):
-        #     self.main_layout.setColumnStretch(1, 0)
-        # else:
-        #     self.main_layout.setColumnStretch(0, 1)
-        #     self.main_layout.setColumnStretch(1, 1)
 
     def refresh_products_area(self):
         print(f"Noua categorie de unde trebuie sa incarc produsele este categoria "
@@ -178,26 +216,16 @@ class ProductsMenuView(QWidget):
         current_row = 0
         current_col = 0
 
+        if len(self.products_pages) == 0:
+            return
+
         for product in self.products_pages[self.current_products_page]:
 
-            product_button = QPushButton()
-            button_inside_layout = QVBoxLayout()
-
-            button_lable = QLabel(product['name'])
-            button_lable.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            font = QFont("Arial", 24, QFont.Weight.Bold)
-            button_lable.setFont(font)
-
-            button_lable.setWordWrap(True)
-            button_lable.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
-            button_inside_layout.addWidget(button_lable)
+            product_button = ProductCardContainer(product)
 
             product_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-            product_button.setLayout(button_inside_layout)
-
-
-            product_button.clicked.connect(partial(self.order_state.update_check,
+            product_button.product_card.clicked.connect(partial(self.order_state.update_check,
                                                      (self.order_state.context.order_page_state.table_id, product)))# TO DO ADD SEMNAL SPRE CHECK SA ADD PRODUCT
 
             self.products_area.addWidget(product_button, current_row, current_col)

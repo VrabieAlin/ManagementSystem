@@ -67,16 +67,14 @@ class CategoryMenuView(QWidget):
 
         button_style = f"""
             QPushButton {{
-                background-color: {Colors.MEDIUM_GRAY_3};
-                border: 1px solid {Colors.MEDIUM_GRAY_3};
-                color: {Colors.BLACK};
+                background-color: {Colors.SOFT_BLUE};
+                border: 1px solid {Colors.SOFT_BLUE};
+                color: {Colors.WHITE};
                 border-radius: 5px;
                 padding: 10px;
-                font-size: 24px;
-                letter-spacing: 1px;
             }}
         """
-        font = QFont("Helvetica", 16)  # Setează "Helvetica" ca font cu dimensiunea 16
+        font = QFont("Arial", 20)
 
 
         total_pages = calculate_total_pages(len(self.categories))
@@ -91,6 +89,7 @@ class CategoryMenuView(QWidget):
         if self.current_page > 0:
             back_button = QPushButton("<<")
             back_button.setStyleSheet(button_style)
+            back_button.setFont(font)
             back_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             back_button.clicked.connect(self.show_previous_page)
             self.categories_layout.addWidget(back_button, 1, 0)
@@ -106,6 +105,7 @@ class CategoryMenuView(QWidget):
                 col = (i + column_offset) % 4
             button = QPushButton(category.name)
             button.setStyleSheet(button_style)
+            button.setFont(font)
             button.clicked.connect(partial(self.order_page_state.change_category, category.id))
             button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             self.categories_layout.addWidget(button, row, col)
@@ -113,6 +113,7 @@ class CategoryMenuView(QWidget):
         if self.current_page < total_pages - 1:
             next_button = QPushButton(">>")
             next_button.setStyleSheet(button_style)
+            next_button.setFont(font)
             next_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             next_button.clicked.connect(self.show_next_page)
             self.categories_layout.addWidget(next_button, 1, 3)
@@ -123,6 +124,7 @@ class CategoryMenuView(QWidget):
             if self.categories_layout.itemAtPosition(row, col) is None:
                 empty_button = QPushButton("")
                 empty_button.setStyleSheet(button_style)
+                empty_button.setFont(font)
                 empty_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
                 empty_button.setEnabled(False)
                 self.categories_layout.addWidget(empty_button, row, col)

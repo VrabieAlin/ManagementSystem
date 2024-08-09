@@ -1,11 +1,13 @@
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QHBoxLayout, QWidget, QLabel
 from PySide6.QtCore import Qt
+
+from app.screens.order_page.model.product import Product
 from app.utils.constants import Colors
 from app.state.order_page_state import OrderPageState
-from app.screens.order_page.view.elements.widgets.product_widget import ProductWidget
+from app.screens.order_page.view.elements.widgets.product_raw_view import ProductWidget
 
 class CheckView(QWidget):
-    products = {}  # key - product_id, value - {product_name, quantity, price, etc...}
+    basket_products = {}  # key - product_id, value - {product_name, quantity, price, etc...}
 
     def __init__(self, main_window):
         super().__init__()
@@ -32,7 +34,7 @@ class CheckView(QWidget):
         self.header_layout = QHBoxLayout()
         self.header_widget.setLayout(self.header_layout)
         self.header_widget.setStyleSheet(
-            "background-color: #2C2C2C; border-radius: 5; border-bottom-left-radius: 0; border-bottom-right-radius: 0")
+            f"background-color: {Colors.SOFT_BLUE}; border-radius: 5; border-bottom-left-radius: 0; border-bottom-right-radius: 0")
 
         header_style = "color: #FFFFFF; font-size: 18px; font-weight: bold; font-family: Arial, sans-serif;"
 
@@ -54,11 +56,22 @@ class CheckView(QWidget):
 
     def create_scroll_area(self):
         self.scroll_area = QScrollArea()
+
         self.scroll_area.setWidgetResizable(True)
         self.main_layout.addWidget(self.scroll_area)
 
         self.product_list_widget = QWidget()
-        self.product_list_widget.setStyleSheet("border-radius: 0;")
+        self.product_list_widget.setObjectName("scroll_area")
+        self.product_list_widget.setStyleSheet(f"""
+                                #scroll_area {{
+                                    background-color: {Colors.SOFT_BLUE_3};
+                                    
+                                }} 
+                                QWidget {{
+                                    border-radius: 0;
+                                }}
+                            """)
+
         self.product_list_widget.setContentsMargins(0, 0, 0, 0)
 
         self.product_list_layout = QVBoxLayout()
@@ -71,41 +84,41 @@ class CheckView(QWidget):
     def create_total_label(self):
         self.total_label = QLabel("Total: 0.00 RON")
         self.total_label.setStyleSheet(
-            "color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px; border-radius: 5; border-top-left-radius: 0; border-top-right-radius: 0")
+            f"background-color: {Colors.SOFT_BLUE_3}; color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px; border-radius: 5; border-top-left-radius: 0; border-top-right-radius: 0")
         self.main_layout.addWidget(self.total_label)
 
-    def add_product(self, table_id, product):
+    def add_product(self, table_id, product: Product):
         try:
-            if product['id'] == -1:
+            if product.id == -1:
                 return
-            if product['id'] in self.products:
-                self.products[product['id']]['quantity'] += 1
-                self.products[product['id']]['widget'].refresh_spinner(self.products[product['id']]['quantity'])
+            if product.id in self.basket_products:
+                self.basket_products[product.id]['quantity'] += 1
+                self.basket_products[product.id]['widget'].refresh_spinner(self.basket_products[product.id]['quantity'])
             else:
-                self.products[product['id']] = {
+                self.basket_products[product.id] = {
                     'quantity': 1,
-                    'price': product['price'],
-                    'name': product['name'],
-                    'recipe_id': product['recipe_id'],
+                    'price': product.price,
+                    'name': product.name,
+                    'recipe_id': product.recipe_id,
                 }
-                product_widget = ProductWidget(product, self.products[product['id']]['quantity'], self.update_product)
+                product_widget = ProductWidget(product, self.basket_products[product.id]['quantity'], self.update_product)
 
                 # Apply zebra striping
-                if len(self.products) % 2 == 0:
+                if len(self.basket_products) % 2 == 0:
                     product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
                 else:
                     product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
 
-                self.products[product['id']]['widget'] = product_widget
+                self.basket_products[product.id]['widget'] = product_widget
                 self.product_list_layout.addWidget(product_widget)
             self.update_total()
         except Exception as e:
             print(f"[Error] Product was not added in check ({e})")
 
     def update_total(self):
-        total = sum(p['price'] * p['quantity'] for p in self.products.values())
+        total = sum(p['price'] * p['quantity'] for p in self.basket_products.values())
         self.total_label.setText(f"Total: {total:.2f} RON")
 
     def update_product(self, product_id, new_quantity):
-        self.products[product_id]['quantity'] = new_quantity
+        self.basket_products[product_id]['quantity'] = new_quantity
         self.update_total()

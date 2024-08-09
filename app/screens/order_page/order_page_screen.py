@@ -46,8 +46,8 @@ class OrderPage(QWidget):
         main_layout.addWidget(self.top_bar, 0, 0, 1, 2)
         main_layout.addWidget(self.check, 1, 0, 2, 1)
         main_layout.addWidget(self.category_menu, 1, 1, 1, 1)
-        main_layout.addWidget(self.products_menu, 2, 1, 1, 1)
-        main_layout.addWidget(self.options, 3, 0, 1, 2)
+        main_layout.addWidget(self.products_menu, 2, 1, 2, 1)
+        main_layout.addWidget(self.options, 3, 0, 1, 1)
 
 
         #-----Resizing-----

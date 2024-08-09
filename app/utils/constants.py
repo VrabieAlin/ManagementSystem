@@ -7,11 +7,17 @@ class ScreenNames:
 class Colors:
     WHITE = "#FFFFFF"  # Alb
     LIGHT_GRAY = "#F5F5F5"  # Gri Deschis
-    MEDIUM_GRAY = "#CCCCCC"  # Gri Mediu
+
+    MEDIUM_GRAY = "#d5d9de"  # Gri Mediu
     MEDIUM_GRAY_2 = "#dbdbdb"  # Gri Mediu 2
     MEDIUM_GRAY_3 = "#b9b9b9"  # Gri Mediu 3
+
     DARK_GRAY = "#333333"  # Gri Închis
+
     SOFT_BLUE = "#4A90E2"  # Albastru Soft
+    SOFT_BLUE_2 = "#bac7d6"  # Albastru Soft 2
+    SOFT_BLUE_3 = "#ccd3db" # Albastru Soft 3
+
     LIGHT_GREEN = "#50E3C2"  # Verde Deschis
     LIGHT_RED = "#FF6F61"  # Roșu Deschis
     LIGHT_ORANGE = "#FFA500"  # Portocaliu Deschis

@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QSpinBox, QLabel
 from PySide6.QtCore import Qt
 
+from app.utils.constants import Colors
+
 
 class SpinWidget(QWidget):
     def __init__(self, quantity, update_callback):
@@ -27,7 +29,18 @@ class SpinWidget(QWidget):
     def setup_decrement_button(self):
         self.decrement_button = QPushButton("-")
         self.decrement_button.setFixedSize(40, 40)
-        self.decrement_button.setStyleSheet("QPushButton { background-color: #ff4d4d; color: white; border-bottom-left-radius: 5px; border-top-left-radius: 5px; }")
+        self.decrement_button.setStyleSheet(f"""
+                                QPushButton 
+                                {{ 
+                                    background-color: {Colors.SOFT_BLUE_2};
+                                    border: 1px solid {Colors.SOFT_BLUE};
+                                    color: white;
+                                    border-top-left-radius: 5px;
+                                    border-bottom-left-radius: 5px;
+                                    font-size: 24px;
+                                }}
+                                """)
+
         self.decrement_button.clicked.connect(self.decrement_quantity)
         self.layout.addWidget(self.decrement_button)
 
@@ -39,13 +52,33 @@ class SpinWidget(QWidget):
         self.quantity_spinbox.setMinimum(1)
         self.quantity_spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.quantity_spinbox.valueChanged.connect(self.update_quantity)
-        self.quantity_spinbox.setStyleSheet("QSpinBox { margin-left: 0; background-color: white;font-size: 24px; color: #000000; }")
+        self.quantity_spinbox.setStyleSheet(f"""
+                                QSpinBox 
+                                {{ 
+                                    margin-left: 0; 
+                                    background-color: white;
+                                    font-size: 24px; 
+                                    color: black;
+                                    border-top: 1px solid {Colors.SOFT_BLUE}; 
+                                    border-bottom: 1px solid {Colors.SOFT_BLUE};
+                                }}
+                                """)
         self.layout.addWidget(self.quantity_spinbox)
 
     def setup_increment_button(self):
         self.increment_button = QPushButton("+")
         self.increment_button.setFixedSize(40, 40)
-        self.increment_button.setStyleSheet("QPushButton { background-color: #4CAF50; color: white; border-bottom-right-radius: 5px; border-top-right-radius: 5px; }")
+        self.increment_button.setStyleSheet(f"""
+                        QPushButton 
+                        {{ 
+                            background-color: {Colors.SOFT_BLUE_2};
+                            border: 1px solid {Colors.SOFT_BLUE};
+                            color: white;
+                            border-bottom-right-radius: 5px;
+                            border-top-right-radius: 5px;
+                            font-size: 24px;
+                        }}
+                        """)
         self.increment_button.clicked.connect(self.increment_quantity)
         self.layout.addWidget(self.increment_button)
 

@@ -2,11 +2,13 @@ import json
 import os
 
 from PySide6.QtCore import Signal, QObject
+from typing import Tuple
 
 from app.utils.decorators.singletone import Singleton
 from app.utils.decorators.state_decorators import save_after
 from app.state.base_state import BaseState
 from box import Box
+from app.screens.order_page.model.product import Product
 
 moked_data = {
     "order_page_state": {
@@ -21,7 +23,7 @@ moked_data = {
 class OrderPageState(BaseState):
     state_changed = Signal()  # for reactivity of the app
     category_change = Signal()
-    product_added = Signal(int, dict)
+    product_added = Signal(int, Product)
 
     def __init__(self):
         super().__init__(moked_data)
@@ -33,7 +35,7 @@ class OrderPageState(BaseState):
         return self.context
 
     @save_after()
-    def update_check(self, params):
+    def update_check(self, params: Tuple[int, Product]):
         table_id, product = params
 
         #TO DO: add product in state
