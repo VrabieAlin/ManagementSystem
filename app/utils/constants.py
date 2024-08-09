@@ -14,11 +14,11 @@ class Colors:
 
     DARK_GRAY = "#333333"  # Gri Închis
 
-    SOFT_BLUE = "#4A90E2"  # Albastru Soft
+    SOFT_BLUE = "#4A90E2"  # Albastru Soft #74, 144, 226
     SOFT_BLUE_2 = "#bac7d6"  # Albastru Soft 2
     SOFT_BLUE_3 = "#ccd3db" # Albastru Soft 3
 
-    LIGHT_GREEN = "#50E3C2"  # Verde Deschis
+    LIGHT_GREEN = "#3cb55e"  # Verde Deschis
     LIGHT_RED = "#FF6F61"  # Roșu Deschis
     LIGHT_ORANGE = "#FFA500"  # Portocaliu Deschis
     DARKER_BLUE = "#357ABD"  # Albastru mai închis (Hover)
