@@ -21,11 +21,6 @@ class ProductWidget(QPushButton):
         self.setObjectName(
             f"product_widget_{product.id}_{random_id}")  # fiecare nume trebuie sa aiba un nume unic pentru a fi identificat unic
 
-        self.setStyleSheet(f"""
-                        #{self.objectName()} {{
-                            border: 1px solid {Colors.SOFT_BLUE};
-                            background-color: {Colors.SOFT_BLUE_2};
-                        }}""")
         self.update_callback = update_callback
         self.quantity = quantity
         self.setContentsMargins(0, 0, 0, 0)
@@ -44,7 +39,7 @@ class ProductWidget(QPushButton):
         #             """)
 
         self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(1, 1, 1, 1)
         self.layout.setSpacing(0)
 
         self.setFixedHeight(60)
@@ -96,8 +91,13 @@ class ProductWidget(QPushButton):
         self.setStyleSheet(f"""
                         #{widget_name} {{
                             border: 1px solid {Colors.SOFT_BLUE};
+                            
+                        }}
+                        QWidget {{
                             background-color: {Colors.SOFT_BLUE_2};
-                        }}""")
+                        }}
+                        """)
+
         self.selected = True
 
     def deselect(self):
