@@ -1,10 +1,14 @@
+import string
+import random
+
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QHBoxLayout, QWidget, QLabel
 from PySide6.QtCore import Qt
 
 from app.screens.order_page.model.product import Product
 from app.utils.constants import Colors
 from app.state.order_page_state import OrderPageState
-from app.screens.order_page.view.elements.widgets.product_raw_view import ProductWidget
+from app.screens.order_page.view.elements.widgets.product_raw_view import ProductRawContainer, ProductWidget
+
 
 class CheckView(QWidget):
     basket_products = {}  # key - product_id, value - {product_name, quantity, price, etc...}
@@ -101,9 +105,10 @@ class CheckView(QWidget):
                     'name': product.name,
                     'recipe_id': product.recipe_id,
                 }
-                product_widget = ProductWidget(product, self.basket_products[product.id]['quantity'], self.update_product)
+                product_widget = ProductRawContainer(product, self.basket_products[product.id]['quantity'], self.update_product, self)
+                product_widget.product_card.clicked.connect(self.show_hide_item_menu)
 
-                # Apply zebra striping
+                #Apply zebra striping
                 if len(self.basket_products) % 2 == 0:
                     product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
                 else:
@@ -122,3 +127,10 @@ class CheckView(QWidget):
     def update_product(self, product_id, new_quantity):
         self.basket_products[product_id]['quantity'] = new_quantity
         self.update_total()
+
+    def show_hide_item_menu(self):
+        widget: ProductWidget = self.sender()
+        if widget.selected == False:
+            widget.select()
+        else:
+            widget.deselect()
