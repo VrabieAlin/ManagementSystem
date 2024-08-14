@@ -1,28 +1,30 @@
-from PySide6 import QtCore
-from PySide6.QtGui import QTouchEvent, QPainter
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QSizePolicy, QGridLayout, QVBoxLayout, QPushButton, \
+from PySide6.QtGui import QPainter
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QGridLayout, QVBoxLayout, QPushButton, \
     QStyleOption, QStyle
-from app.screens.order_page.view.elements.widgets.spin_widget import SpinWidget
-from PySide6.QtCore import Qt, Signal, QEvent
+
+from app.screens.order_page.view.elements.widgets.check_row.selected_product_menu import SelectedProductMenu
+from app.screens.order_page.view.elements.widgets.check_row.spin_widget import SpinWidget
+from PySide6.QtCore import Qt
 
 import random
 import string
 
 from app.utils.constants import Colors
+from app.state.order_page_state import OrderPageState, BasketProduct
 
 
 class ProductWidget(QPushButton):
-    def __init__(self, product, quantity, update_callback, parent=None):
+    def __init__(self, basket_product, parent=None):
         super().__init__(parent)
-        self.product = product
+        self.basket_product: BasketProduct = basket_product
+        self.selected_product_menu = None
 
         self.selected = False
+        self.order_page_state: OrderPageState = OrderPageState.instance()
         random_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
         self.setObjectName(
-            f"product_widget_{product.id}_{random_id}")  # fiecare nume trebuie sa aiba un nume unic pentru a fi identificat unic
+            f"product_widget_{basket_product.product.id}_{random_id}")  # fiecare nume trebuie sa aiba un nume unic pentru a fi identificat unic
 
-        self.update_callback = update_callback
-        self.quantity = quantity
         self.setContentsMargins(0, 0, 0, 0)
 
         self.load_view()
@@ -33,13 +35,25 @@ class ProductWidget(QPushButton):
         p = QPainter(self)
         self.style().drawPrimitive(QStyle.PE_Widget, o, p, self)
 
+    def reload_element(self, basket_product):
+        self.basket_product: BasketProduct = basket_product
+        self.layout.removeWidget(self.name_label)
+        self.layout.removeWidget(self.parent_spin)
+        self.layout.removeWidget(self.price_label)
+        self.name_label.deleteLater()
+        self.parent_spin.deleteLater()
+        self.price_label.deleteLater()
+        self.layout.deleteLater()
+
+        self.load_view()
+
     def load_view(self):
         # self.setStyleSheet(f"""
         #                 border-radius: 0;
         #             """)
 
         self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(1, 1, 1, 1)
+        self.layout.setContentsMargins(5, 5, 5, 5)
         self.layout.setSpacing(0)
 
         self.setFixedHeight(60)
@@ -51,7 +65,7 @@ class ProductWidget(QPushButton):
         self.setup_price_label()
 
     def setup_name_label(self):
-        self.name_label = QLabel(self.product.name)
+        self.name_label = QLabel(self.basket_product.product.name)
         self.name_label.setStyleSheet("font-size: 24px; color: #000000; padding: 5px;")
         self.layout.addWidget(self.name_label, 1)
 
@@ -61,7 +75,7 @@ class ProductWidget(QPushButton):
         self.parent_layout.setContentsMargins(0, 0, 0, 0)
         self.parent_layout.setSpacing(0)
 
-        self.spin_widget = SpinWidget(self.quantity, self.update_quantity)
+        self.spin_widget = SpinWidget(self.basket_product.quantity, self.update_quantity)
         self.spin_widget.setAutoFillBackground(True)
         self.spin_widget.setParent(self.parent_spin)
 
@@ -70,15 +84,15 @@ class ProductWidget(QPushButton):
         self.layout.addWidget(self.parent_spin, 1)
 
     def setup_price_label(self):
-        self.price_label = QLabel(f"{self.product.price * self.quantity:.2f} RON")
+        self.price_label = QLabel(f"{self.basket_product.product.price * self.basket_product.quantity:.2f} RON")
         self.price_label.setStyleSheet("font-size: 24px; color: #000000; padding: 0 5px;")
         self.price_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         self.layout.addWidget(self.price_label, 1)
 
     def update_quantity(self, new_quantity):
-        self.quantity = new_quantity
-        self.price_label.setText(f"{self.product.price * self.quantity:.2f} RON")
-        self.update_callback(self.product.id, new_quantity)
+        self.basket_product.quantity = new_quantity
+        self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity:.2f} RON")
+        self.order_page_state.update_check((self.basket_product.table_id, self.basket_product))
 
     def refresh_spinner(self, new_spinner_value):
         self.spin_widget.set_value(new_spinner_value)
@@ -91,6 +105,7 @@ class ProductWidget(QPushButton):
         self.setStyleSheet(f"""
                         #{widget_name} {{
                             border: 1px solid {Colors.SOFT_BLUE};
+                            border-radius: 5px;
                             
                         }}
                         QWidget {{
@@ -100,16 +115,26 @@ class ProductWidget(QPushButton):
 
         self.selected = True
 
+        if self.selected_product_menu is None:
+            self.selected_product_menu = SelectedProductMenu(self.basket_product.product, self.deselect, self)
+            self.selected_product_menu.move(self.mapToGlobal(self.rect().topRight()))
+            self.selected_product_menu.show()
+
     def deselect(self):
         self.setStyleSheet(self.old_style)
         self.selected = False
 
+        # Hide and delete the selected product menu
+        if self.selected_product_menu is not None:
+            self.selected_product_menu.close()
+            self.selected_product_menu = None
+
 class ProductRawContainer(QPushButton):
-    def __init__(self, product, quantity, update_callback, parent=None):
+    def __init__(self, basket_product, parent=None):
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)  # Set margin-top to 10px
-        self.product_card = ProductWidget(product, quantity, update_callback, self)
+        self.product_card = ProductWidget(basket_product, self)
 
         self.layout.addWidget(self.product_card)
         self.setFixedHeight(60)

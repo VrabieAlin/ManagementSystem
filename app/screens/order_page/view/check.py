@@ -1,25 +1,26 @@
-import string
-import random
-
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QHBoxLayout, QWidget, QLabel
 from PySide6.QtCore import Qt
 
 from app.screens.order_page.model.product import Product
-from app.utils.constants import Colors
-from app.state.order_page_state import OrderPageState
-from app.screens.order_page.view.elements.widgets.product_raw_view import ProductRawContainer, ProductWidget
+from app.utils.constants import Colors, ORDERED_PRODUCT_STATUS as PRODUCT_STATUS
+from app.screens.order_page.view.elements.widgets.check_row.product_raw_view import ProductRawContainer, ProductWidget, BasketProduct, OrderPageState
 
+import traceback
+import random
+import string
 
 class CheckView(QWidget):
-    basket_products = {}  # key - product_id, value - {product_name, quantity, price, etc...}
+    basket_products: dict[str, BasketProduct] = {}  # key - table_id_product_id_state, value - BasketProduct -> {product_name, quantity, price, etc...}
 
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
+        self.selected_product = None
+
         self.order_state: OrderPageState = OrderPageState.instance()
         self.load_view()
 
-        self.order_state.product_added.connect(self.add_product)
+        self.order_state.product_added_signal.connect(self.add_product)
         self.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY}; border: 0; border-radius: 5;")
 
     def load_view(self):
@@ -30,6 +31,8 @@ class CheckView(QWidget):
         self.create_header()
         self.create_scroll_area()
         self.create_total_label()
+
+        self.order_state.reload_check_signal.connect(self.reload_basket_product)
 
         self.setLayout(self.main_layout)
 
@@ -91,21 +94,32 @@ class CheckView(QWidget):
             f"background-color: {Colors.SOFT_BLUE_3}; color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px; border-radius: 5; border-top-left-radius: 0; border-top-right-radius: 0")
         self.main_layout.addWidget(self.total_label)
 
+    def generate_basket_id(self):
+        # Lungimea șirului aleator
+        lungime = 20
+
+        # Setul de caractere din care se va genera șirul
+        caractere = string.ascii_letters + string.digits + string.punctuation
+
+        # Generarea șirului aleator
+        sir_random = ''.join(random.choice(caractere) for _ in range(lungime))
+
+        return sir_random
+
     def add_product(self, table_id, product: Product):
         try:
-            if product.id == -1:
+            if product is None or product.id == -1 or table_id == -1:
                 return
-            if product.id in self.basket_products:
-                self.basket_products[product.id]['quantity'] += 1
-                self.basket_products[product.id]['widget'].refresh_spinner(self.basket_products[product.id]['quantity'])
+
+
+            basket_id = self.generate_basket_id()
+            if basket_id in self.basket_products:
+                self.basket_products[basket_id].quantity += 1
+                self.basket_products[basket_id].widget.product_card.refresh_spinner(self.basket_products[basket_id].quantity)
             else:
-                self.basket_products[product.id] = {
-                    'quantity': 1,
-                    'price': product.price,
-                    'name': product.name,
-                    'recipe_id': product.recipe_id,
-                }
-                product_widget = ProductRawContainer(product, self.basket_products[product.id]['quantity'], self.update_product, self)
+                self.basket_products[basket_id] = BasketProduct(basket_id, 1, table_id, PRODUCT_STATUS.NEW, product)
+
+                product_widget = ProductRawContainer(self.basket_products[basket_id], self)
                 product_widget.product_card.clicked.connect(self.show_hide_item_menu)
 
                 #Apply zebra striping
@@ -114,23 +128,43 @@ class CheckView(QWidget):
                 else:
                     product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
 
-                self.basket_products[product.id]['widget'] = product_widget
+                self.basket_products[basket_id].widget = product_widget
                 self.product_list_layout.addWidget(product_widget)
             self.update_total()
         except Exception as e:
-            print(f"[Error] Product was not added in check ({e})")
+            print(f"[Error check] Product was not added in check ({e})")
+            print(f"[Error check] Stack trace: ({traceback.format_exc()})")
 
     def update_total(self):
-        total = sum(p['price'] * p['quantity'] for p in self.basket_products.values())
+        total = sum(p.product.price * p.quantity for p in self.basket_products.values())
         self.total_label.setText(f"Total: {total:.2f} RON")
 
     def update_product(self, product_id, new_quantity):
-        self.basket_products[product_id]['quantity'] = new_quantity
+        self.basket_products[product_id].quantity = new_quantity
+        self.update_total()
+
+    def reload_current_table_check(self, table_id):
+        for basket_id, basket_product in self.basket_products.items():
+            for basket_product in self.order_state.context['tables_orders'].get(table_id, []):
+                self.reload_basket_product(basket_product)
+
+    def reload_basket_product(self, basket_product):
+        if basket_product.basket_id in self.basket_products:
+            self.basket_products[basket_product.basket_id].widget.product_card.reload_element(basket_product)
+        else:
+            self.add_product(basket_product.table_id, basket_product.product)
+
         self.update_total()
 
     def show_hide_item_menu(self):
         widget: ProductWidget = self.sender()
+
+        if self.selected_product is not None and self.selected_product != widget:
+            self.selected_product.deselect()
+        self.selected_product = widget
+
         if widget.selected == False:
             widget.select()
         else:
             widget.deselect()
+            self.selected_product = None

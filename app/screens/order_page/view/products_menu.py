@@ -2,14 +2,12 @@
 from functools import partial
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QLabel, QSizePolicy, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QPushButton, QGridLayout, QSizePolicy, QVBoxLayout
 
 from app.screens.order_page.model.db_loader import OrderDB
-from app.screens.order_page.view.elements.widgets.product_card import ProductCardContainer
+from app.screens.order_page.view.elements.widgets.product_cart.product_card import ProductCardContainer
 from app.state.order_page_state import OrderPageState
 from app.utils.constants import Colors
-from app.screens.order_page.model.product import Product
 
 
 class ProductsMenuView(QWidget):
@@ -225,7 +223,7 @@ class ProductsMenuView(QWidget):
 
             product_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-            product_button.product_card.clicked.connect(partial(self.order_state.update_check,
+            product_button.product_card.clicked.connect(partial(self.order_state.add_product_to_basket,
                                                      (self.order_state.context.order_page_state.table_id, product)))# TO DO ADD SEMNAL SPRE CHECK SA ADD PRODUCT
 
             self.products_area.addWidget(product_button, current_row, current_col)

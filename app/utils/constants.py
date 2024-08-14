@@ -25,7 +25,11 @@ class Colors:
     EVEN_DARKER_BLUE = "#2B6BA5"  # Albastru și mai închis (Pressed)
     BLACK = "#000000"  # Negru
 
-
+class ORDERED_PRODUCT_STATUS:
+    NEW = "new"
+    ORDERED = "ordered"
+    NOT_ORDERED = "not_ordered"
+    CANCELLED = "cancelled"
 
 class BorderType:
     SOLID = "solid"

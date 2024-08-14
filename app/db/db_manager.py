@@ -7,7 +7,7 @@ from app.utils.utils import dict_factory
 
 class DBManager():
     def __init__(self):
-        # self.delete_db() # ASV: WARNING: ONLY FOR TESTS
+        self.delete_db() # ASV: WARNING: ONLY FOR TESTS
         self.init_db()
 
     def init_db(self):
