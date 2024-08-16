@@ -35,9 +35,11 @@ class ProductWidget(QPushButton):
         o = QStyleOption()
         o.initFrom(self)
         p = QPainter(self)
-        self.style().drawPrimitive(QStyle.PE_Widget, o, p, self)
+        self.style().drawPrimitive(QStyle.PrimitiveElement.PE_Widget, o, p, self)
 
     def reload_element(self, basket_product):
+
+        #--------Close phase---------
         self.basket_product: BasketProduct = basket_product
         self.layout.removeWidget(self.name_label)
         self.layout.removeWidget(self.parent_spin)
@@ -46,11 +48,17 @@ class ProductWidget(QPushButton):
         self.parent_spin.deleteLater()
         self.price_label.deleteLater()
 
+        if self.selected: #Fortam selectarea din nou
+            self.deselect()
+            self.selected = True
 
+        #--------Open phase---------
         self.setup_name_label()
         self.setup_spin_widget()
         self.setup_price_label()
 
+        if self.selected:
+            self.select()
 
     def load_view(self):
         # self.setStyleSheet(f"""
@@ -99,6 +107,10 @@ class ProductWidget(QPushButton):
         self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity:.2f} RON")
         self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
 
+    def update_description(self, new_description):
+        self.basket_product.notes = new_description
+        self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
+
     def refresh_spinner(self, new_spinner_value):
         self.spin_widget.set_value(new_spinner_value)
 
@@ -121,13 +133,16 @@ class ProductWidget(QPushButton):
         self.selected = True
 
         if self.selected_product_menu is None:
-            self.selected_product_menu = SelectedProductMenu(self.basket_product.product, self.deselect, self)
+            callbacks = {
+                "edit_description": self.update_description,
+            }
+            self.selected_product_menu = SelectedProductMenu(self.basket_product, callbacks, self.deselect, self)
             self.selected_product_menu.move(self.mapToGlobal(self.rect().topRight()))
             self.selected_product_menu.show()
 
-        if self.basket_product.notes == "":
+        if self.basket_product.notes != "":
             if self.notes_editor is None:
-                self.notes_editor = NotesEditor(self.basket_product, self.deselect, self)
+                self.notes_editor = NotesEditor(self.basket_product, self.update_description, self.deselect, self)
                 self.notes_editor.move(self.mapToGlobal(self.rect().bottomLeft()))
                 self.notes_editor.show()
 

@@ -20,6 +20,7 @@ class Colors:
 
     SOFT_RED = "#E24A56"  # Roșu Soft
     SOFT_RED_2 = "#D6BABF"
+    SOFT_RED_3 = "#b53c3c"
 
     LIGHT_GREEN = "#3cb55e"  # Verde Deschis
     LIGHT_RED = "#FF6F61"  # Roșu Deschis

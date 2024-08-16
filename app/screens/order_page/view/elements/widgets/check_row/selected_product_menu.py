@@ -1,13 +1,15 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QGridLayout, QPushButton, QSizePolicy
 
+from app.screens.order_page.view.elements.widgets.check_row.modals.edit_description_dialog import EditDescriptionDialog
 from app.utils.constants import Colors
 
 class SelectedProductMenu(QDialog):
 
-    def __init__(self, basket_product, close_callback, parent=None):
+    def __init__(self, basket_product, update_callbacks, close_callback, parent=None):
         super().__init__(parent)
 
+        self.update_callbacks = update_callbacks
         self.commands = {
             "edit_description":
                 {
@@ -98,8 +100,12 @@ class SelectedProductMenu(QDialog):
         pass
 
     def edit_description_callback(self):
-        # Modal de editare descriere
-        pass
+        try:
+            dialog = EditDescriptionDialog(self.basket_product, self.update_callbacks["edit_description"], self)
+            if dialog.exec():
+                print("Description updated:", self.basket_product.notes)
+        except Exception as e:
+            print(f"Edit description callback failed: {e}")
 
     def modify_number_callback(self):
         # Modal de modificare cantitate / acelasi ca la spin_widget

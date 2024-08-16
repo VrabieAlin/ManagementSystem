@@ -58,6 +58,8 @@ class CheckView(QWidget):
                     self.basket_products_widgets[basket_product.basket_id] = product_widget
                     self.product_list_layout.addWidget(product_widget)  # Add product to the list
 
+        self.update_total()
+
     def create_header(self):
         self.header_widget = QWidget()
         self.header_layout = QHBoxLayout()
