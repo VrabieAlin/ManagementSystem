@@ -18,6 +18,9 @@ class Colors:
     SOFT_BLUE_2 = "#bac7d6"  # Albastru Soft 2
     SOFT_BLUE_3 = "#ccd3db" # Albastru Soft 3
 
+    SOFT_RED = "#E24A56"  # Roșu Soft
+    SOFT_RED_2 = "#D6BABF"
+
     LIGHT_GREEN = "#3cb55e"  # Verde Deschis
     LIGHT_RED = "#FF6F61"  # Roșu Deschis
     LIGHT_ORANGE = "#FFA500"  # Portocaliu Deschis

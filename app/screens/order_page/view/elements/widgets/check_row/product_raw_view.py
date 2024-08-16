@@ -2,6 +2,7 @@ from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QGridLayout, QVBoxLayout, QPushButton, \
     QStyleOption, QStyle
 
+from app.screens.order_page.view.elements.widgets.check_row.notes import NotesEditor
 from app.screens.order_page.view.elements.widgets.check_row.selected_product_menu import SelectedProductMenu
 from app.screens.order_page.view.elements.widgets.check_row.spin_widget import SpinWidget
 from PySide6.QtCore import Qt
@@ -18,6 +19,7 @@ class ProductWidget(QPushButton):
         super().__init__(parent)
         self.basket_product: BasketProduct = basket_product
         self.selected_product_menu = None
+        self.notes_editor = None
 
         self.selected = False
         self.order_page_state: OrderPageState = OrderPageState.instance()
@@ -123,6 +125,13 @@ class ProductWidget(QPushButton):
             self.selected_product_menu.move(self.mapToGlobal(self.rect().topRight()))
             self.selected_product_menu.show()
 
+        if self.basket_product.notes == "":
+            if self.notes_editor is None:
+                self.notes_editor = NotesEditor(self.basket_product, self.deselect, self)
+                self.notes_editor.move(self.mapToGlobal(self.rect().bottomLeft()))
+                self.notes_editor.show()
+
+
     def deselect(self):
         self.setStyleSheet(self.old_style)
         self.selected = False
@@ -131,6 +140,10 @@ class ProductWidget(QPushButton):
         if self.selected_product_menu is not None:
             self.selected_product_menu.close()
             self.selected_product_menu = None
+
+        if self.notes_editor is not None:
+            self.notes_editor.close()
+            self.notes_editor = None
 
 class ProductRawContainer(QPushButton):
     def __init__(self, basket_product, parent=None):

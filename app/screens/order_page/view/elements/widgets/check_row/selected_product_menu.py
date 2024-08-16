@@ -1,12 +1,11 @@
-from PySide6.QtCore import Qt, QPropertyAnimation, QTimer
-from PySide6.QtWidgets import QWidget, QGridLayout, QLabel, QPushButton, QSizePolicy, QGraphicsOpacityEffect
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QGridLayout, QPushButton, QSizePolicy
 
 from app.utils.constants import Colors
 
+class SelectedProductMenu(QDialog):
 
-class SelectedProductMenu(QWidget):
-
-    def __init__(self, product, close_callback, parent=None):
+    def __init__(self, basket_product, close_callback, parent=None):
         super().__init__(parent)
 
         self.commands = {
@@ -42,31 +41,26 @@ class SelectedProductMenu(QWidget):
                 },
         }
         self.widgets = []
-        self.product = product
+        self.basket_product = basket_product
         self.close_callback = close_callback
 
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Popup)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
 
-        #self.setFixedSize(300, 300)
         self.layout = QGridLayout()
-        self.layout.setContentsMargins(1, 0, 0, 0)
+        self.layout.setContentsMargins(5, 0, 0, 0)
         self.layout.setSpacing(3)
 
         self.setLayout(self.layout)
 
         self.setup_menu()
 
-
     def setup_menu(self):
-        product_name_label = QLabel(self.product.name)
-        #self.layout.addWidget(product_name_label, 0, 0, 1, 2)
-
         row = 1
         for index, command in enumerate(self.commands.values()):
             button = QPushButton(command["name"])
             button.setStyleSheet(f"""
-                                QPushButton {{ 
+                                QPushButton {{
                                     background-color: {Colors.SOFT_BLUE_2};
                                     color: {Colors.SOFT_BLUE};
                                     border: 1 solid {Colors.SOFT_BLUE};
@@ -77,8 +71,14 @@ class SelectedProductMenu(QWidget):
                 button.setProperty("border-top-left-radius", "5px")
                 button.setProperty("border-top-right-radius", "5px")
             elif index == len(self.commands) - 1:
-                button.setProperty("border-bottom-left-radius", "5px")
-                button.setProperty("border-bottom-right-radius", "5px")
+                button.setStyleSheet(f"""
+                                    QPushButton {{
+                                        background-color: {Colors.SOFT_RED_2};
+                                        color: {Colors.SOFT_RED};
+                                        border: 1 solid {Colors.SOFT_RED};
+                                        border-radius: 5px;
+                                        font-size: 20px;
+                                      }}""")
 
             button.clicked.connect(command["function"])
             button.setFixedSize(300, 60)
@@ -86,7 +86,6 @@ class SelectedProductMenu(QWidget):
             self.layout.addWidget(button, row, 0)
             self.widgets.append(button)
             row += 1
-
 
     def close_callback(self):
         self.close()
