@@ -43,9 +43,12 @@ class ProductWidget(QPushButton):
         self.name_label.deleteLater()
         self.parent_spin.deleteLater()
         self.price_label.deleteLater()
-        self.layout.deleteLater()
 
-        self.load_view()
+
+        self.setup_name_label()
+        self.setup_spin_widget()
+        self.setup_price_label()
+
 
     def load_view(self):
         # self.setStyleSheet(f"""
@@ -92,7 +95,7 @@ class ProductWidget(QPushButton):
     def update_quantity(self, new_quantity):
         self.basket_product.quantity = new_quantity
         self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity:.2f} RON")
-        self.order_page_state.update_check((self.basket_product.table_id, self.basket_product))
+        self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
 
     def refresh_spinner(self, new_spinner_value):
         self.spin_widget.set_value(new_spinner_value)

@@ -10,15 +10,18 @@ import random
 import string
 
 class CheckView(QWidget):
-    basket_products: dict[str, BasketProduct] = {}  # key - table_id_product_id_state, value - BasketProduct -> {product_name, quantity, price, etc...}
-
+    basket_products: dict[str, dict[str, BasketProduct]] = {}  # key - table_id, value - dict[basket_id, BasketProduct]
+    basket_products_widgets: dict[str, ProductRawContainer] = {}  # key - basket_id, value - ProductRawContainer (widget for that basket_product_id)
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
         self.selected_product = None
 
         self.order_state: OrderPageState = OrderPageState.instance()
+
+
         self.load_view()
+        self.load_basket_products_from_state()
 
         self.order_state.product_added_signal.connect(self.add_product)
         self.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY}; border: 0; border-radius: 5;")
@@ -32,9 +35,28 @@ class CheckView(QWidget):
         self.create_scroll_area()
         self.create_total_label()
 
+        #Trebuie sa distrug elementele dupa ce ies de aici?
+
         self.order_state.reload_check_signal.connect(self.reload_basket_product)
 
         self.setLayout(self.main_layout)
+
+    def load_basket_products_from_state(self):
+        for table_id, basket_products in self.order_state.context['tables_orders'].items():
+            for basket_product in basket_products.values():
+                if table_id not in self.basket_products:
+                    self.basket_products[table_id] = {}
+                self.basket_products[table_id][basket_product.basket_id] = BasketProduct.from_dict(basket_product)
+                if basket_product.basket_id not in self.basket_products_widgets:
+                    product_widget = ProductRawContainer(self.basket_products[table_id][basket_product.basket_id], self)
+                    product_widget.product_card.clicked.connect(self.show_hide_item_menu)
+                    # Apply zebra striping
+                    if len(self.basket_products[table_id]) % 2 == 0:
+                        product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
+                    else:
+                        product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
+                    self.basket_products_widgets[basket_product.basket_id] = product_widget
+                    self.product_list_layout.addWidget(product_widget)  # Add product to the list
 
     def create_header(self):
         self.header_widget = QWidget()
@@ -110,47 +132,80 @@ class CheckView(QWidget):
         try:
             if product is None or product.id == -1 or table_id == -1:
                 return
+            table_id = str(table_id)
+            if table_id not in self.basket_products:
+                self.basket_products[table_id] = {}
 
-
-            basket_id = self.generate_basket_id()
-            if basket_id in self.basket_products:
-                self.basket_products[basket_id].quantity += 1
-                self.basket_products[basket_id].widget.product_card.refresh_spinner(self.basket_products[basket_id].quantity)
             else:
-                self.basket_products[basket_id] = BasketProduct(basket_id, 1, table_id, PRODUCT_STATUS.NEW, product)
+                basket_id = self.get_basket_id_from_product(product.id)
+                if basket_id is not None:
+                    self.basket_products[table_id][basket_id].quantity += 1
+                    if basket_id in self.basket_products_widgets:
+                        self.basket_products_widgets[basket_id].product_card.refresh_spinner(
+                            self.basket_products[table_id][basket_id].quantity)
+                    else:
+                        product_widget = ProductRawContainer(self.basket_products[table_id][basket_id], self)
+                        product_widget.product_card.clicked.connect(self.show_hide_item_menu)
+                        self.basket_products_widgets[basket_id] = product_widget
+                        self.product_list_layout.addWidget(product_widget)
+                    self.update_total()
+                    return
 
-                product_widget = ProductRawContainer(self.basket_products[basket_id], self)
-                product_widget.product_card.clicked.connect(self.show_hide_item_menu)
+            #product does not exist as a new product in basket so we add it
+            basket_id = self.generate_basket_id()
 
-                #Apply zebra striping
-                if len(self.basket_products) % 2 == 0:
-                    product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
-                else:
-                    product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
+            self.basket_products[table_id][basket_id] = BasketProduct(basket_id, 1, table_id, PRODUCT_STATUS.NEW, product)
 
-                self.basket_products[basket_id].widget = product_widget
-                self.product_list_layout.addWidget(product_widget)
+            product_widget = ProductRawContainer(self.basket_products[table_id][basket_id], self)
+            product_widget.product_card.clicked.connect(self.show_hide_item_menu)
+
+            #Apply zebra striping
+            if len(self.basket_products[table_id]) % 2 == 0:
+                product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
+            else:
+                product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
+
+            self.basket_products_widgets[basket_id] = product_widget
+            self.product_list_layout.addWidget(product_widget)
             self.update_total()
         except Exception as e:
             print(f"[Error check] Product was not added in check ({e})")
             print(f"[Error check] Stack trace: ({traceback.format_exc()})")
 
     def update_total(self):
-        total = sum(p.product.price * p.quantity for p in self.basket_products.values())
+        current_table_id = str(self.order_state.context['order_page_state']['table_id'])
+        total = sum(p.product.price * p.quantity for p in self.basket_products[current_table_id].values())
         self.total_label.setText(f"Total: {total:.2f} RON")
 
     def update_product(self, product_id, new_quantity):
-        self.basket_products[product_id].quantity = new_quantity
-        self.update_total()
+        current_table_id = str(self.order_state.context['order_page_state']['table_id'])
+        basket_id = self.get_basket_id_from_product(product_id)
+        if basket_id is not None:
+            self.basket_products[current_table_id][basket_id].quantity = new_quantity
+            self.update_total()
+        else:
+            print(f"[Error check] Could not update product with id {product_id}")
 
-    def reload_current_table_check(self, table_id):
-        for basket_id, basket_product in self.basket_products.items():
-            for basket_product in self.order_state.context['tables_orders'].get(table_id, []):
-                self.reload_basket_product(basket_product)
+
+    def get_basket_id_from_product(self, product_id, product_status = PRODUCT_STATUS.NEW):
+        try:
+            current_table_id = str(self.order_state.context['order_page_state']['table_id'])
+            for basket_id, basket_product in self.basket_products[current_table_id].items():
+                if basket_product.product.id == product_id and product_status == basket_product.status:
+                    return basket_id
+        except Exception as e:
+            print(f"[Error check] Could not get basket id from product ({e})")
+            print(f"[Error check] Stack trace: ({traceback.format_exc()})")
+        return None
 
     def reload_basket_product(self, basket_product):
-        if basket_product.basket_id in self.basket_products:
-            self.basket_products[basket_product.basket_id].widget.product_card.reload_element(basket_product)
+        table_id = str(basket_product.table_id)
+
+        if table_id not in self.basket_products:
+            self.basket_products[table_id] = {}
+
+        if basket_product.basket_id in self.basket_products[table_id]:
+            self.basket_products_widgets[basket_product.basket_id].product_card.reload_element(basket_product)
         else:
             self.add_product(basket_product.table_id, basket_product.product)
 

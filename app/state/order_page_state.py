@@ -39,13 +39,13 @@ class OrderPageState(BaseState):
         return self.context
 
     @save_after()
-    def update_check(self, params: Tuple[int, BasketProduct]):
+    def update_check(self, params: Tuple[str, BasketProduct]):
         table_id, basket_product = params
 
         #TO DO: add product in state
         if table_id not in self.context.tables_orders:
             self.context.tables_orders[table_id] = {}
-        self.context.tables_orders[table_id][basket_product.basket_id] = basket_product
+        self.context.tables_orders[table_id][basket_product.basket_id] = basket_product.to_dict()
 
 
         self.reload_check_signal.emit(basket_product) #Used in check.py to refresh the check

@@ -75,7 +75,10 @@ class MyApp(QMainWindow):
 
     def set_screen(self, screen_name):
         if screen_name in self.screens:
+
             self.screen_manager.setCurrentIndex(self.screens[screen_name])
+            #cand schimb ecranul sa eliberez resursele din fostul ecran
+
             # Update page
             self.order_screen.refresh_graphic()
         else:

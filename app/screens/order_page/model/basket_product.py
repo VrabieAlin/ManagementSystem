@@ -10,10 +10,24 @@ class BasketProduct:
         self.table_id = table_id
         self.status = status
         self.product: Product = product
-        self.widget = None
 
-    @property
-    def neserializabil(self):
-        return self.widget
+    def to_dict(self):
+        # Convertirea într-un dicționar
+        return {'basket_id': self.basket_id,
+                'quantity': self.quantity,
+                'table_id': self.table_id,
+                'status': self.status,
+                'product': self.product.to_dict()
+                }
 
-    TO DO: SA TRANSFORM OBIECTUL IN DICTIONAR! pentru a putea fi serializabil
+    @classmethod
+    def from_dict(cls, data):
+        product_data = data.get('product', {})
+        product = Product.from_dict(product_data)
+        return cls(
+            id=data.get('basket_id', -1),
+            quantity=data.get('quantity', 0),
+            table_id=data.get('table_id', -1),
+            status=data.get('status', ''),
+            product=product
+        )
