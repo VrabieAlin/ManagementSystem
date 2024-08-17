@@ -1,14 +1,15 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QSpinBox, QLabel
 from PySide6.QtCore import Qt
 
+from app.screens.order_page.view.elements.widgets.check_row.spin_box_widget import CustomSpinBox
 from app.utils.constants import Colors
 
 
 class SpinWidget(QWidget):
-    def __init__(self, quantity, update_callback):
+    def __init__(self, basket_product, update_callback):
         super().__init__()
         self.update_callback = update_callback
-        self.quantity = quantity
+        self.basket_product = basket_product
         #self.setStyleSheet("background-color: white; border-radius: 5px;")
         self.load_view()
 
@@ -45,24 +46,7 @@ class SpinWidget(QWidget):
         self.layout.addWidget(self.decrement_button)
 
     def setup_quantity_spinbox(self):
-        self.quantity_spinbox = QSpinBox()
-        self.quantity_spinbox.setButtonSymbols(QSpinBox.ButtonSymbols.NoButtons)  # Hide the increment and decrement buttons
-        self.quantity_spinbox.setFixedSize(60, 40)
-        self.quantity_spinbox.setValue(self.quantity)
-        self.quantity_spinbox.setMinimum(1)
-        self.quantity_spinbox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.quantity_spinbox.valueChanged.connect(self.update_quantity)
-        self.quantity_spinbox.setStyleSheet(f"""
-                                QSpinBox 
-                                {{ 
-                                    margin-left: 0; 
-                                    background-color: white;
-                                    font-size: 24px; 
-                                    color: black;
-                                    border-top: 1px solid {Colors.SOFT_BLUE}; 
-                                    border-bottom: 1px solid {Colors.SOFT_BLUE};
-                                }}
-                                """)
+        self.quantity_spinbox = CustomSpinBox(self.basket_product, self.update_callback)
         self.layout.addWidget(self.quantity_spinbox)
 
     def setup_increment_button(self):

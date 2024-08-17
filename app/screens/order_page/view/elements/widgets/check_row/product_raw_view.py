@@ -88,7 +88,7 @@ class ProductWidget(QPushButton):
         self.parent_layout.setContentsMargins(0, 0, 0, 0)
         self.parent_layout.setSpacing(0)
 
-        self.spin_widget = SpinWidget(self.basket_product.quantity, self.update_quantity)
+        self.spin_widget = SpinWidget(self.basket_product, self.update_quantity)
         self.spin_widget.setAutoFillBackground(True)
         self.spin_widget.setParent(self.parent_spin)
 
@@ -135,6 +135,7 @@ class ProductWidget(QPushButton):
         if self.selected_product_menu is None:
             callbacks = {
                 "edit_description": self.update_description,
+                "modify_number": self.update_quantity,
             }
             self.selected_product_menu = SelectedProductMenu(self.basket_product, callbacks, self.deselect, self)
             self.selected_product_menu.move(self.mapToGlobal(self.rect().topRight()))
