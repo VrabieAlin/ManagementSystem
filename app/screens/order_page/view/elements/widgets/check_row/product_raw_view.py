@@ -104,12 +104,18 @@ class ProductWidget(QPushButton):
 
     def update_quantity(self, new_quantity):
         self.basket_product.quantity = new_quantity
-        self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity} RON")
+        #self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity} RON")
         self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
 
     def update_description(self, new_description):
         self.basket_product.notes = new_description
         self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
+
+    def void_element(self):
+        self.order_page_state.void_element((str(self.basket_product.table_id), self.basket_product))
+
+    def void_total_new(self):
+        self.order_page_state.void_total_new((str(self.basket_product.table_id)))
 
     def refresh_spinner(self, new_spinner_value):
         self.spin_widget.set_value(new_spinner_value)
@@ -136,6 +142,8 @@ class ProductWidget(QPushButton):
             callbacks = {
                 "edit_description": self.update_description,
                 "modify_number": self.update_quantity,
+                "void": self.void_element,
+                "void_total": self.void_total_new,
             }
             self.selected_product_menu = SelectedProductMenu(self.basket_product, callbacks, self.deselect, self)
             self.selected_product_menu.move(self.mapToGlobal(self.rect().topRight()))
@@ -161,10 +169,12 @@ class ProductWidget(QPushButton):
             self.notes_editor.close()
             self.notes_editor = None
 
+
 class ProductRawContainer(QPushButton):
     def __init__(self, basket_product, parent=None):
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
+        self.basket_product = basket_product
         self.layout.setContentsMargins(0, 0, 0, 0)  # Set margin-top to 10px
         self.product_card = ProductWidget(basket_product, self)
 
@@ -173,6 +183,9 @@ class ProductRawContainer(QPushButton):
         self.selected = False
         self.setLayout(self.layout)
 
+        # Conectăm semnalul destroyed la o funcție
+        self.destroyed.connect(self.on_destroyed)
+
     def select(self):
         self.product_card.select()
         self.selected = True
@@ -180,3 +193,7 @@ class ProductRawContainer(QPushButton):
     def deselect(self):
         self.product_card.deselect()
         self.selected = False
+
+    def on_destroyed(self):
+        self.product_card.deselect()
+        super().destroyed()

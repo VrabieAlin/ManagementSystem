@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QGridLayout, QPushButton, QSizePolicy
 
+from app.screens.order_page.view.elements.widgets.check_row.modals.confirmation_modal import ConfirmationDialog
 from app.screens.order_page.view.elements.widgets.check_row.modals.edit_description_dialog import EditDescriptionDialog
 from app.screens.order_page.view.elements.widgets.check_row.modals.edit_quantity_modal import EditQuantityDialog
 from app.utils.constants import Colors
@@ -94,10 +95,21 @@ class SelectedProductMenu(QDialog):
         self.close()
 
     def void_callback(self):
-        pass
+        try:
+            self.update_callbacks["void"]()
+        except Exception as e:
+            print(f"Void failed: {e}")
 
     def void_total_callback(self):
         # Modal de confirmare.
+        try:
+            text = "Esti sigur ca vrei sa stergi toate produsele noi adaugate?"
+            dialog = ConfirmationDialog(text, self.update_callbacks["void_total"], self)
+            if dialog.exec():
+                print("Void total")
+        except Exception as e:
+            print(f"Total void failed: {e}")
+
         pass
 
     def edit_description_callback(self):

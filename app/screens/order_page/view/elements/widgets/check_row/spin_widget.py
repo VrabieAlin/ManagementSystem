@@ -46,11 +46,9 @@ class SpinWidget(QWidget):
         self.layout.addWidget(self.decrement_button)
 
     def setup_quantity_spinbox(self):
-        self.quantity_spinbox = CustomSpinBox(self.basket_product, self.update_callback)
-        self.layout.addWidget(self.quantity_spinbox)
+        self.quantity_label = CustomSpinBox(self.basket_product, self.update_callback)
+        self.layout.addWidget(self.quantity_label)
 
-    def mousePressEvent(self, event):
-        print("Mouse pressed2")
     def setup_increment_button(self):
         self.increment_button = QPushButton("+")
         self.increment_button.setFixedSize(40, 40)
@@ -69,15 +67,12 @@ class SpinWidget(QWidget):
         self.layout.addWidget(self.increment_button)
 
     def increment_quantity(self):
-        self.quantity_spinbox.setValue(self.quantity_spinbox.value() + 1)
+        self.quantity_label.set_text(str(float(self.quantity_label.get_text()) + 1))
 
     def decrement_quantity(self):
-        if self.quantity_spinbox.value() > 1:
-            self.quantity_spinbox.setValue(self.quantity_spinbox.value() - 1)
-
-    def update_quantity(self):
-        self.update_callback(self.quantity_spinbox.value())
+        if float(self.quantity_label.get_text()) > 1:
+            self.quantity_label.set_text(str(float(self.quantity_label.get_text()) - 1))
 
     def set_value(self, value):
-        self.quantity_spinbox.setValue(value)
+        self.quantity_label.set_text(str(value))
 

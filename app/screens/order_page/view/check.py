@@ -1,3 +1,5 @@
+import copy
+
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QHBoxLayout, QWidget, QLabel
 from PySide6.QtCore import Qt
 
@@ -18,10 +20,10 @@ class CheckView(QWidget):
         self.selected_product = None
 
         self.order_state: OrderPageState = OrderPageState.instance()
-
+        self.current_table_id = str(self.order_state.context['order_page_state']['table_id'])
 
         self.load_view()
-        self.load_basket_products_from_state()
+        self.load_basket_products_from_state(self.current_table_id)
 
         self.order_state.product_added_signal.connect(self.add_product)
         self.setStyleSheet(f"background-color: {Colors.LIGHT_GRAY}; border: 0; border-radius: 5;")
@@ -37,11 +39,46 @@ class CheckView(QWidget):
 
         #Trebuie sa distrug elementele dupa ce ies de aici?
 
-        self.order_state.reload_check_signal.connect(self.reload_basket_product)
+        self.order_state.reload_check_signal.connect(self.refresh_check)
 
         self.setLayout(self.main_layout)
 
-    def load_basket_products_from_state(self):
+    def refresh_check(self, table_id):
+        table_id = str(table_id)
+
+        # Clear basket products for the given table_id
+        if table_id in self.basket_products:
+            del self.basket_products[table_id]
+
+        # Clear basket products widgets for the given table_id
+        basket_ids_to_remove = [basket_id for basket_id, widget in self.basket_products_widgets.items() if
+                                widget.basket_product.table_id == table_id]
+        for basket_id in basket_ids_to_remove:
+            del self.basket_products_widgets[basket_id]
+
+        # Remove all widgets from product_list_layout
+        while self.product_list_layout.count():
+            item = self.product_list_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
+        #destroy all widgets
+        while self.product_list_layout.count():
+            item = self.product_list_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None and isinstance(widget, ProductRawContainer):
+                widget.product_card.clicked.disconnect(self.show_hide_item_menu)
+                widget.deleteLater()
+
+        #reload
+        self.load_basket_products_from_state(table_id)
+
+
+    def load_basket_products_from_state(self, table_id):
+        self.selected_product = None
+        self.basket_products = {}
+        self.basket_products_widgets = {}
         for table_id, basket_products in self.order_state.context['tables_orders'].items():
             for basket_product in basket_products.values():
                 if table_id not in self.basket_products:
@@ -57,6 +94,9 @@ class CheckView(QWidget):
                         product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
                     self.basket_products_widgets[basket_product.basket_id] = product_widget
                     self.product_list_layout.addWidget(product_widget)  # Add product to the list
+
+        if table_id not in self.basket_products:
+            self.basket_products[table_id] = {}
 
         self.update_total()
 
@@ -118,61 +158,43 @@ class CheckView(QWidget):
             f"background-color: {Colors.SOFT_BLUE_3}; color: black; font-size: 20px; font-weight: bold; padding: 10px; margin-bottom: 10px; border-radius: 5; border-top-left-radius: 0; border-top-right-radius: 0")
         self.main_layout.addWidget(self.total_label)
 
-    def generate_basket_id(self):
-        # Lungimea șirului aleator
-        lungime = 20
 
-        # Setul de caractere din care se va genera șirul
-        caractere = string.ascii_letters + string.digits + string.punctuation
-
-        # Generarea șirului aleator
-        sir_random = ''.join(random.choice(caractere) for _ in range(lungime))
-
-        return sir_random
-
-    def add_product(self, table_id, product: Product):
+    def add_product(self, table_id: int, basket_product: BasketProduct):
         try:
-            if product is None or product.id == -1 or table_id == -1:
-                return
             table_id = str(table_id)
+            basket_id = basket_product.basket_id
+
             if table_id not in self.basket_products:
                 self.basket_products[table_id] = {}
 
+            self.basket_products[table_id][basket_id] = basket_product
+
+            if basket_id not in self.basket_products_widgets:
+                self.add_product_widget(basket_product)
             else:
-                basket_id = self.get_basket_id_from_product(product.id)
-                if basket_id is not None:
-                    self.basket_products[table_id][basket_id].quantity += 1
-                    if basket_id in self.basket_products_widgets:
-                        self.basket_products_widgets[basket_id].product_card.refresh_spinner(
-                            self.basket_products[table_id][basket_id].quantity)
-                    else:
-                        product_widget = ProductRawContainer(self.basket_products[table_id][basket_id], self)
-                        product_widget.product_card.clicked.connect(self.show_hide_item_menu)
-                        self.basket_products_widgets[basket_id] = product_widget
-                        self.product_list_layout.addWidget(product_widget)
-                    self.update_total()
-                    return
+                self.basket_products_widgets[basket_id].product_card.refresh_spinner(
+                    self.basket_products[table_id][basket_id].quantity)
 
-            #product does not exist as a new product in basket so we add it
-            basket_id = self.generate_basket_id()
-
-            self.basket_products[table_id][basket_id] = BasketProduct(basket_id, 1, table_id, PRODUCT_STATUS.NEW, product)
-
-            product_widget = ProductRawContainer(self.basket_products[table_id][basket_id], self)
-            product_widget.product_card.clicked.connect(self.show_hide_item_menu)
-
-            #Apply zebra striping
-            if len(self.basket_products[table_id]) % 2 == 0:
-                product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
-            else:
-                product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
-
-            self.basket_products_widgets[basket_id] = product_widget
-            self.product_list_layout.addWidget(product_widget)
             self.update_total()
         except Exception as e:
             print(f"[Error check] Product was not added in check ({e})")
             print(f"[Error check] Stack trace: ({traceback.format_exc()})")
+
+    def add_product_widget(self, basket_product: BasketProduct):
+        basket_id = basket_product.basket_id
+        table_id = str(basket_product.table_id)
+
+        product_widget = ProductRawContainer(basket_product, self)
+        product_widget.product_card.clicked.connect(self.show_hide_item_menu)
+
+        # Apply zebra striping
+        if len(self.basket_products[table_id]) % 2 == 0:
+            product_widget.setStyleSheet("background-color: #F5F5F5;")  # Light color
+        else:
+            product_widget.setStyleSheet("background-color: #E0E0E0;")  # Darker color
+
+        self.basket_products_widgets[basket_id] = product_widget
+        self.product_list_layout.addWidget(product_widget)
 
     def update_total(self):
         current_table_id = str(self.order_state.context['order_page_state']['table_id'])
