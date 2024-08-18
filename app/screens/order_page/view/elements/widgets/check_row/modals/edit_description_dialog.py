@@ -84,6 +84,7 @@ class EditDescriptionDialog(QDialog):
                                     background-color: {Colors.LIGHT_GREEN};
                                     color: {Colors.WHITE};
                                     border-bottom-left-radius: 5px;
+                                    border-right: 1 solid {Colors.BLACK};
                                 }}
                                 """)
 
@@ -92,6 +93,7 @@ class EditDescriptionDialog(QDialog):
                                     background-color: {Colors.SOFT_RED};
                                     color: {Colors.WHITE};
                                     border-bottom-right-radius: 5px;
+                                    border-left: 1 solid {Colors.BLACK};
                                 }}
                                 """)
 

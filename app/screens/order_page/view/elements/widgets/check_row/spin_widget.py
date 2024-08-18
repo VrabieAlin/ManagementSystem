@@ -49,6 +49,8 @@ class SpinWidget(QWidget):
         self.quantity_spinbox = CustomSpinBox(self.basket_product, self.update_callback)
         self.layout.addWidget(self.quantity_spinbox)
 
+    def mousePressEvent(self, event):
+        print("Mouse pressed2")
     def setup_increment_button(self):
         self.increment_button = QPushButton("+")
         self.increment_button.setFixedSize(40, 40)
@@ -78,3 +80,4 @@ class SpinWidget(QWidget):
 
     def set_value(self, value):
         self.quantity_spinbox.setValue(value)
+

@@ -6,7 +6,7 @@ from app.utils.constants import Colors, ORDERED_PRODUCT_STATUS as PRODUCT_STATUS
 class BasketProduct:
     def __init__(self, id, quantity, table_id, status, product, notes=""):
         self.basket_id = id
-        self.quantity = quantity
+        self.quantity: float = quantity
         self.table_id = table_id
         self.status = status
         self.product: Product = product
@@ -28,7 +28,7 @@ class BasketProduct:
         product = Product.from_dict(product_data)
         return cls(
             id=data.get('basket_id', -1),
-            quantity=data.get('quantity', 0),
+            quantity=data.get('quantity', 0.0),
             table_id=data.get('table_id', -1),
             status=data.get('status', ''),
             notes=data.get('notes', ''),

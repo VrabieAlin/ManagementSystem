@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox,
 from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 
+from app.screens.order_page.model.basket_product import BasketProduct
 from app.utils.constants import Colors
 
 
@@ -10,7 +11,7 @@ class EditQuantityDialog(QDialog):
     def __init__(self, basket_product, update_description_callback, parent=None):
         super().__init__(parent)
         self.char_limit = 100
-        self.basket_product = basket_product
+        self.basket_product: BasketProduct = basket_product
         self.update_description_callback = update_description_callback
 
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
@@ -59,8 +60,8 @@ class EditQuantityDialog(QDialog):
         self.init_keyboard()
         self.init_button_box()
 
-        self.layout.setRowStretch(0, 1)
-        self.layout.setRowStretch(1, 8)
+        self.layout.setRowStretch(0, 2)
+        self.layout.setRowStretch(1, 6)
         self.layout.setRowStretch(2, 1)
 
         self.layout.setColumnStretch(0, 1)
@@ -71,6 +72,7 @@ class EditQuantityDialog(QDialog):
     def init_label(self):
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setText(f"{self.basket_product.quantity}")
         font = QFont("Arial", 20)
         self.label.setFont(font)
         self.layout.addWidget(self.label, 0, 0, 1, 2)
@@ -88,6 +90,7 @@ class EditQuantityDialog(QDialog):
 
         for text, row, col in buttons:
             button = QPushButton(text)
+            button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             button.setMinimumHeight(60)
             font = QFont("Arial", 20)
             button.setFont(font)
@@ -106,6 +109,10 @@ class EditQuantityDialog(QDialog):
             self.label.setText(current_text[:-1])
         else:
             current_text = self.label.text()
+            if text == '.' and '.' in current_text:
+                return  # Prevent adding more than one decimal point
+            if '.' in current_text and len(current_text.split('.')[-1]) >= 2:
+                return  # Prevent adding more than two decimal places
             self.label.setText(current_text + text)
 
     def init_button_box(self):
@@ -144,5 +151,5 @@ class EditQuantityDialog(QDialog):
         self.layout.addWidget(cancel_button, 2, 1)
 
     def accept(self):
-        self.update_description_callback(self.label.text())
+        self.update_description_callback(float(self.label.text()))
         super().accept()

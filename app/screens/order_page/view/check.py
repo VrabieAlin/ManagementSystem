@@ -177,7 +177,7 @@ class CheckView(QWidget):
     def update_total(self):
         current_table_id = str(self.order_state.context['order_page_state']['table_id'])
         total = sum(p.product.price * p.quantity for p in self.basket_products[current_table_id].values())
-        self.total_label.setText(f"Total: {total:.2f} RON")
+        self.total_label.setText(f"Total: {total} RON")
 
     def update_product(self, product_id, new_quantity):
         current_table_id = str(self.order_state.context['order_page_state']['table_id'])
