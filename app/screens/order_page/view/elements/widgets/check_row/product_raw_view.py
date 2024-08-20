@@ -104,7 +104,7 @@ class ProductWidget(QPushButton):
 
     def update_quantity(self, new_quantity):
         self.basket_product.quantity = new_quantity
-        #self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity} RON")
+        self.price_label.setText(f"{self.basket_product.product.price * self.basket_product.quantity} RON")
         self.order_page_state.update_check((str(self.basket_product.table_id), self.basket_product))
 
     def update_description(self, new_description):
@@ -119,6 +119,7 @@ class ProductWidget(QPushButton):
 
     def refresh_spinner(self, new_spinner_value):
         self.spin_widget.set_value(new_spinner_value)
+        self.update_quantity(new_spinner_value)
 
     def select(self):
 

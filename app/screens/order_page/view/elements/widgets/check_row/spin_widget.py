@@ -67,11 +67,15 @@ class SpinWidget(QWidget):
         self.layout.addWidget(self.increment_button)
 
     def increment_quantity(self):
-        self.quantity_label.set_text(str(float(self.quantity_label.get_text()) + 1))
+        new_quantity = float(self.quantity_label.get_text()) + 1
+        self.quantity_label.set_text(str(new_quantity))
+        self.update_callback(new_quantity)
 
     def decrement_quantity(self):
         if float(self.quantity_label.get_text()) > 1:
-            self.quantity_label.set_text(str(float(self.quantity_label.get_text()) - 1))
+            new_quantity = float(self.quantity_label.get_text()) - 1
+            self.quantity_label.set_text(str(new_quantity))
+            self.update_callback(new_quantity)
 
     def set_value(self, value):
         self.quantity_label.set_text(str(value))

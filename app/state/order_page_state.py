@@ -72,7 +72,7 @@ class OrderPageState(BaseState):
             print(f"[Error check] Stack trace: ({traceback.format_exc()})")
         return None
 
-    def create_basket_product(self, table_id: int, product: Product) -> BasketProduct:
+    def create_basket_product(self, table_id: int, product: Product) -> BasketProduct: #return the new basket product if it was created or the existing one
         table_id = str(table_id)
         if table_id not in self.context.tables_orders:
             self.context.tables_orders[table_id] = {}
