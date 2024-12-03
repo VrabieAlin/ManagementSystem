@@ -1,15 +1,14 @@
+from app.screens.location_view_editor.location_view_editor_screen import LocationViewEditorScreen
+from app.utils.constants import ScreenNames
+from app.screens.home_page.home_page_screen import HomePageScreen
+from app.screens.order_page.order_page_screen import OrderPage
 import sys
-
-from PySide6.QtGui import QPalette, QColor
 from PySide6.QtWidgets import QApplication, QMainWindow, QStackedWidget
-
 from app.db.db_manager import DBManager
 from app.db.for_testing.db_populator import DBInserter
-from app.screens.home_page.home_page_screen import HomePageScreen
-from app.screens.location_view_editor.location_view_editor_screen import LocationViewEditorScreen
-from app.screens.order_page.order_page_screen import OrderPage
 from app.utils.constants import Colors
-from app.utils.constants import ScreenNames
+
+from PySide6.QtGui import QPalette, QColor
 
 '''
 Color pallete:
@@ -69,7 +68,6 @@ class MyApp(QMainWindow):
 
         # Set fullscreen mode
         self.showFullScreen()
-        self.show()
 
         #Update page
         self.order_screen.refresh_graphic()
@@ -77,7 +75,10 @@ class MyApp(QMainWindow):
 
     def set_screen(self, screen_name):
         if screen_name in self.screens:
+
             self.screen_manager.setCurrentIndex(self.screens[screen_name])
+            #cand schimb ecranul sa eliberez resursele din fostul ecran
+
             # Update page
             self.order_screen.refresh_graphic()
         else:

@@ -2,30 +2,23 @@ import json
 import os
 
 from PySide6.QtCore import Signal, QObject
-from box import Box
 
 from app.utils.decorators.singletone import Singleton
 from app.utils.decorators.state_decorators import save_after
+from app.state.base_state import BaseState
+from box import Box
+
+moked_data = {
+        "logged_in": False,
+        "user_name": None
+}
 
 
 @Singleton
-class UserState(QObject):
+class UserState(BaseState):
     state_changed = Signal()  # for reactivity of the app
     def __init__(self):
-        super().__init__()
-        self.file_path = "state.json"
-
-        self.context = Box({"logged_in": False,
-                            "user_name": None})
-
-        self.load_state()
-
-    def load_state(self):
-        if os.path.exists(self.file_path):
-            with open(self.file_path, "r") as file:
-                data = json.load(file)
-                self.context.logged_in = data.get("logged_in", False)
-                self.context.user_name = data.get("user_name", None)
+        super().__init__(moked_data)
 
     @save_after()
     def login(self, user_name):
